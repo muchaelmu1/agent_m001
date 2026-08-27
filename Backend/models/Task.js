@@ -1,34 +1,18 @@
-// models/Task.js
-const mongoose = require("mongoose");
+// Backend/models/Task.js
+import mongoose from 'mongoose';
 
-const taskSchema = new mongoose.Schema({
-  agentId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Agent"
+const { Schema } = mongoose;
+
+const TaskSchema = new Schema(
+  {
+    agentId: { type: String, required: true },
+    type: { type: String, required: true },
+    input: { type: Schema.Types.Mixed },
+    status: { type: String, default: 'queued' }, // queued, running, done, failed
+    result: { type: Schema.Types.Mixed },
+    error: { type: String },
   },
+  { timestamps: true }
+);
 
-  type: String,
-
-  input: mongoose.Schema.Types.Mixed,
-
-  status: {
-    type: String,
-    enum: [
-      "received",
-      "working",
-      "resolved",
-      "escalated",
-      "failed"
-    ],
-    default: "received"
-  },
-
-  result: mongoose.Schema.Types.Mixed,
-
-  requiresHuman: {
-    type: Boolean,
-    default: false
-  }
-}, { timestamps: true });
-
-module.exports = mongoose.model("Task", taskSchema);
+export default mongoose.models.Task || mongoose.model('Task', TaskSchema);

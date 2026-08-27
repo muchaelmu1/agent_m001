@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ServeAI - Agent Dashboard</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1>ServeAI</h1>
+        <p class="subtitle">Intelligent Agent Management System</p>
+      </div>
+      <nav class="nav">
+        <a href="Index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="auth.html">Logout</a>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Stats Section -->
+      <section class="stats-section">
+        <div class="stat-card">
+          <div class="stat-number" id="totalTasks">0</div>
+          <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="resolvedTasks">0</div>
+          <div class="stat-label">Resolved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="workingTasks">0</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="escalatedTasks">0</div>
+          <div class="stat-label">Escalated</div>
+        </div>
+      </section>
+
+      <div class="content-wrapper">
+        <!-- Left Panel: Agents -->
+        <section class="agents-panel">
+          <h2>Active Agents</h2>
+          <div class="agents-list" id="agentsList">
+            <p class="loading">Loading agents...</p>
+          </div>
+        </section>
+
+        <!-- Middle Panel: Create Task -->
+        <section class="task-creation-panel">
+          <h2>Create New Task</h2>
+          <form id="taskForm" class="task-form">
+            <div class="form-group">
+              <label for="taskAgent">Assign to Agent:</label>
+              <select id="taskAgent" required>
+                <option value="">Select an agent...</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskType">Task Type:</label>
+              <select id="taskType" required>
+                <option value="">Select type...</option>
+                <option value="customer_service">Customer Service</option>
+                <option value="inventory">Inventory Management</option>
+                <option value="billing">Billing & Finance</option>
+                <option value="support">Technical Support</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="taskInput">Task Description:</label>
+              <textarea id="taskInput" placeholder="Describe the task..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="taskPriority">Priority:</label>
+              <select id="taskPriority">
+                <option value="low">Low</option>
+                <option value="normal" selected>Normal</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Task</button>
+            <div id="submitMessage" class="message"></div>
+          </form>
+        </section>
+
+        <!-- Right Panel: Recent Tasks -->
+        <section class="tasks-panel">
+          <h2>Recent Tasks</h2>
+          <div class="filter-group">
+            <select id="statusFilter">
+              <option value="">All Status</option>
+              <option value="received">Received</option>
+              <option value="working">Working</option>
+              <option value="resolved">Resolved</option>
+              <option value="escalated">Escalated</option>
+              <option value="failed">Failed</option>
+            </select>
+          </div>
+          <div class="tasks-log" id="tasksList">
+            <p class="loading">Loading tasks...</p>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="api/serveai-api.js"></script>
+  <script src="serveai-app.js"></script>
+</body>
+</html>
