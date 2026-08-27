@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serveai — Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<nav class="dashboard-nav" aria-label="Primary">
+  <div class="wrap nav-wrap">
+    <div class="logo">serveai</div>
+    
+    <div class="nav-center">
+      <div class="nav-breadcrumb">Operations Dashboard</div>
+    </div>
+
+    <div class="nav-user">
+      <button class="user-menu-btn" id="user-menu-btn" aria-expanded="false">
+        <div class="user-avatar" id="user-avatar">D</div>
+        <span class="user-name" id="user-name">Demo User</span>
+        <span class="dropdown-arrow">▼</span>
+      </button>
+      <div class="user-dropdown" id="user-dropdown">
+        <a href="#profile-settings" class="dropdown-item">Profile Settings</a>
+        <a href="#" class="dropdown-item">Billing</a>
+        <a href="#" class="dropdown-item">Team</a>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item logout-btn" id="logout-btn">Sign Out</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+  <button class="menu-btn" id="menu-btn" aria-expanded="false">menu</button>
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="overview">
+        <span class="icon">📊</span>
+        <span>Overview</span>
+      </a>
+      <a href="#" class="nav-item" data-section="agents">
+        <span class="icon">🤖</span>
+        <span>Agents</span>
+      </a>
+      <a href="#" class="nav-item" data-section="tasks">
+        <span class="icon">✓</span>
+        <span>Tasks</span>
+      </a>
+      <a href="#" class="nav-item" data-section="integrations">
+        <span class="icon">⚡</span>
+        <span>Integrations</span>
+      </a>
+      <a href="#" class="nav-item" data-section="settings">
+        <span class="icon">⚙</span>
+        <span>Settings</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="upgrade-card">
+        <div class="upgrade-tag">Starter Plan</div>
+        <p>Upgrade to Growth for more agents</p>
+        <a href="#" class="btn-primary" style="width: 100%; text-align: center;">Upgrade →</a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main" class="dashboard-main">
+    <!-- Overview Section -->
+    <section id="overview-section" class="dashboard-section active">
+      <div class="section-header">
+        <h1>Operations Overview</h1>
+        <p class="section-subtitle">Real-time metrics from your agent fleet</p>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Active Agents</span>
+            <span class="metric-status online">● Online</span>
+          </div>
+          <div class="metric-value">3</div>
+          <div class="metric-detail">All agents operational</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Tasks Today</span>
+            <span class="metric-trend">↑ 12% vs yesterday</span>
+          </div>
+          <div class="metric-value">847</div>
+          <div class="metric-detail">Processed and logged</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Resolution Rate</span>
+            <span class="metric-status success">✓ Exceeding</span>
+          </div>
+          <div class="metric-value">68%</div>
+          <div class="metric-detail">Without human escalation</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-label">Avg Response Time</span>
+            <span class="metric-status">⚡ Fast</span>
+          </div>
+          <div class="metric-value">42s</div>
+          <div class="metric-detail">From received to first action</div>
+        </div>
+      </div>
+
+      <!-- Live Activity Console -->
+      <div class="activity-section">
+        <div class="activity-header">
+          <h2>Live Activity Log</h2>
+          <div class="filter-controls">
+            <select class="filter-select" id="agent-filter">
+              <option value="">All Agents</option>
+              <option value="AGENT-03">AGENT-03</option>
+              <option value="AGENT-07">AGENT-07</option>
+              <option value="AGENT-11">AGENT-11</option>
+            </select>
+          </div>
+        </div>
+        <div class="console">
+          <div class="console-head">
+            <span>ops-log · live</span>
+            <span class="live"><span class="live-dot"></span><span id="active-count">3</span> agents active</span>
+          </div>
+          <div class="console-body" id="dashboard-log-body"></div>
+        </div>
+      </div>
+
+      <!-- Recent Tasks -->
+      <div class="activity-section">
+        <div class="activity-header">
+          <h2>Recent Tasks</h2>
+          <a href="#" class="view-all-link">View all →</a>
+        </div>
+        <div class="task-list" id="task-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Agents Section -->
+    <section id="agents-section" class="dashboard-section">
+      <div class="section-header">
+        <h1>Agent Management</h1>
+        <button class="btn-primary">+ Add Agent</button>
+      </div>
+
+      <div class="agents-grid" id="agents-grid">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- Tasks Section -->
+    <section id="tasks-section" class="dashboard-section">
+      <div class="section-header">
+        <h1>All Tasks</h1>
+        <div class="filter-bar">
+          <select class="filter-select">
+            <option>All Status</option>
+            <option>Resolved</option>
+            <option>Working</option>
+            <option>Escalated</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr class="table_row">
+              <th>Task ID</th>
+              <th>Agent</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tasks-table-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Integrations Section -->
+    <section id="integrations-section" class="dashboard-section">
+      <div class="section-header">
+        <h1>Connected Integrations</h1>
+        <button class="btn-primary">+ Connect Service</button>
+      </div>
+
+      <div class="integrations-grid" id="integrations-grid">
+        <div class="integration-card connected">
+          <div class="integration-icon">📧</div>
+          <h3>Email</h3>
+          <p class="integration-status">Connected to ops@company.com</p>
+          <button class="btn-ghost" style="width: 100%; margin-top: 12px;">Configure</button>
+        </div>
+
+        <div class="integration-card">
+          <div class="integration-icon">🎫</div>
+          <h3>Ticketing</h3>
+          <p class="integration-status muted">Not connected</p>
+          <button class="btn-primary" style="width: 100%; margin-top: 12px;">Connect</button>
+        </div>
+
+        <div class="integration-card">
+          <div class="integration-icon">📊</div>
+          <h3>Analytics</h3>
+          <p class="integration-status muted">Not connected</p>
+          <button class="btn-primary" style="width: 100%; margin-top: 12px;">Connect</button>
+        </div>
+
+        <div class="integration-card">
+          <div class="integration-icon">💳</div>
+          <h3>Billing</h3>
+          <p class="integration-status muted">Not connected</p>
+          <button class="btn-primary" style="width: 100%; margin-top: 12px;">Connect</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section id="profile-settings" class="dashboard-section">
+      <div class="section-header">
+        <h1>Settings</h1>
+      </div>
+
+      <div class="settings-panel">
+        <div class="setting-group">
+          <div class="setting-label">
+            <h3>Company Information</h3>
+            <p>Update your account details</p>
+          </div>
+          <form class="settings-form">
+            <div class="form-group">
+              <label>Company Name</label>
+              <input type="text" value="Demo Company" placeholder="Your company name">
+            </div>
+            <div class="form-group">
+              <label>Industry</label>
+              <select>
+                <option>Select industry</option>
+                <option selected>Logistics</option>
+                <option>Healthcare</option>
+                <option>Retail</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </form>
+        </div>
+
+        <div class="setting-group">
+          <div class="setting-label">
+            <h3>Notification Preferences</h3>
+            <p>Choose how we keep you updated</p>
+          </div>
+          <label class="toggle-setting">
+            <input type="checkbox" checked>
+            <span class="toggle-label">Email alerts for escalations</span>
+          </label>
+          <label class="toggle-setting">
+            <input type="checkbox" checked>
+            <span class="toggle-label">Daily summary reports</span>
+          </label>
+          <label class="toggle-setting">
+            <input type="checkbox">
+            <span class="toggle-label">Weekly performance reviews</span>
+          </label>
+        </div>
+
+        <div class="setting-group danger">
+          <div class="setting-label">
+            <h3>Danger Zone</h3>
+            <p>Irreversible actions</p>
+          </div>
+          <button class="btn-danger">Delete Account</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,6 +1,4 @@
- @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
-
-  :root{
+:root{
     --ink:#0E1420;
     --panel:#161F32;
     --panel-line:#28334C;
@@ -552,3 +550,91 @@
     gap:16px;
   }
   footer .fine{ font-family:var(--mono); font-size:12px; color:var(--muted); }
+
+/* =========================
+   AUTHENTICATION BUTTONS
+========================= */
+
+.auth-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.login-btn,
+.signup-btn {
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+    padding: 9px 16px;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.login-btn {
+    color: var(--text);
+    border: 1px solid var(--panel-line);
+    background: transparent;
+}
+
+.login-btn:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+}
+
+.signup-btn {
+    color: var(--ink);
+    background: var(--amber);
+    border: 1px solid var(--amber);
+}
+
+.signup-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   HERO AUTH AREA
+========================= */
+
+.hero-auth {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+
+/* =========================
+   FINAL CTA
+========================= */
+
+.cta-band .cta-row {
+    justify-content: center;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 720px) {
+
+    .auth-actions {
+        gap: 6px;
+    }
+
+    .login-btn,
+    .signup-btn {
+        padding: 8px 11px;
+        font-size: 12px;
+    }
+
+    .cta-band .cta-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+}

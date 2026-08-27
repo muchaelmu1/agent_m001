@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serveai — Sign In</title>
+<link rel="stylesheet" href="serveai.css">
+<link rel="stylesheet" href="auth.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<nav aria-label="Primary">
+  <div class="wrap">
+    <div class="logo">serveai</div>
+    <div class="nav-mid">
+      <div class="nav-links">
+        <a href="index.html">Back to home</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main id="main" class="auth-main">
+  <div class="auth-container">
+    
+    <!-- Login Form -->
+    <div class="auth-panel" id="login-panel">
+      <div class="auth-head">
+        <h1>Sign In</h1>
+        <p>Access your operations dashboard</p>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            name="email" 
+            placeholder="ops@company.com" 
+            required
+            autocomplete="email"
+          >
+          <span class="error-msg" id="login-email-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            name="password" 
+            placeholder="••••••••" 
+            required
+            autocomplete="current-password"
+          >
+          <span class="error-msg" id="login-password-error"></span>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox">
+            <input type="checkbox" name="remember" id="remember-me">
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="link-text" onclick="toggleForgot(event)">Forgot password?</a>
+        </div>
+
+        <span class="error-msg" id="login-general-error"></span>
+
+        <button type="submit" class="btn-primary btn-full">Sign In →</button>
+
+        <div class="auth-divider">
+          <span>New to Serveai?</span>
+        </div>
+
+        <button type="button" class="btn-ghost btn-full" onclick="toggleForm()">Create an account</button>
+      </form>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="auth-panel hidden" id="signup-panel">
+      <div class="auth-head">
+        <h1>Create Account</h1>
+        <p>Start automating your operations</p>
+      </div>
+
+      <form id="signup-form" class="auth-form">
+        <div class="form-group">
+          <label for="signup-name">Full Name</label>
+          <input 
+            type="text" 
+            id="signup-name" 
+            name="name" 
+            placeholder="Jane Operations" 
+            required
+            autocomplete="name"
+          >
+          <span class="error-msg" id="signup-name-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-email">Email Address</label>
+          <input 
+            type="email" 
+            id="signup-email" 
+            name="email" 
+            placeholder="ops@company.com" 
+            required
+            autocomplete="email"
+          >
+          <span class="error-msg" id="signup-email-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-company">Company Name</label>
+          <input 
+            type="text" 
+            id="signup-company" 
+            name="company" 
+            placeholder="Your Company" 
+            required
+            autocomplete="organization"
+          >
+          <span class="error-msg" id="signup-company-error"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input 
+            type="password" 
+            id="signup-password" 
+            name="password" 
+            placeholder="••••••••" 
+            required
+            autocomplete="new-password"
+          >
+          <span class="error-msg" id="signup-password-error"></span>
+          <div class="password-strength" id="strength-meter">
+            <div class="strength-bar"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="signup-confirm">Confirm Password</label>
+          <input 
+            type="password" 
+            id="signup-confirm" 
+            name="confirm" 
+            placeholder="••••••••" 
+            required
+            autocomplete="new-password"
+          >
+          <span class="error-msg" id="signup-confirm-error"></span>
+        </div>
+
+        <label class="checkbox">
+          <input type="checkbox" name="terms" id="terms" required>
+          <span>I agree to the <a href="#" class="link-text">Terms of Service</a></span>
+        </label>
+
+        <span class="error-msg" id="signup-general-error"></span>
+
+        <button type="submit" class="btn-primary btn-full">Create Account →</button>
+
+        <div class="auth-divider">
+          <span>Already have an account?</span>
+        </div>
+
+        <button type="button" class="btn-ghost btn-full" onclick="toggleForm()">Sign In</button>
+      </form>
+    </div>
+
+    <!-- Forgot Password Form -->
+    <div class="auth-panel hidden" id="forgot-panel">
+      <div class="auth-head">
+        <h1>Reset Password</h1>
+        <p>We'll send you a reset link</p>
+      </div>
+
+      <form id="forgot-form" class="auth-form">
+        <div class="form-group">
+          <label for="forgot-email">Email Address</label>
+          <input 
+            type="email" 
+            id="forgot-email" 
+            name="email" 
+            placeholder="ops@company.com" 
+            required
+            autocomplete="email"
+          >
+          <span class="error-msg" id="forgot-email-error"></span>
+        </div>
+
+        <span class="error-msg" id="forgot-general-error"></span>
+        <span class="success-msg" id="forgot-success"></span>
+
+        <button type="submit" class="btn-primary btn-full">Send Reset Link →</button>
+
+        <button type="button" class="btn-ghost btn-full" onclick="toggleForgot(null)">Back to Sign In</button>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Auth info cards -->
+  <div class="auth-info">
+    <div class="wrap">
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-icon">🔐</div>
+          <h3>Enterprise Security</h3>
+          <p>SOC 2 Type II certified with end-to-end encryption</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">⚡</div>
+          <h3>One-Click SSO</h3>
+          <p>Connect your identity provider in minutes</p>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🔄</div>
+          <h3>Auto-Sync Teams</h3>
+          <p>User permissions sync automatically from your org</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="logo">serveai</div>
+    <span class="fine">© 2026 Serveai Operations, Inc.</span>
+  </div>
+</footer>
+
+<script src="auth.js"></script>
+</body>
+</html>
