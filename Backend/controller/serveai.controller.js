@@ -3,6 +3,9 @@ import Task from "../models/Task.js";
 import Agent from "../models/Agent.model.js";
 import Activity from "../models/Activity.model.js";
 import { OpenAI } from "openai";
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const openai = new OpenAI({
   apiKey: process.env.openai_key,

@@ -9,15 +9,20 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["ai", "agents", "openai", "task-processing"],
+  "keywords": [
+    "ai",
+    "agents",
+    "openai",
+    "task-processing"
+  ],
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.1.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.9.4",
     "openai": "^7.5.0"
   },
