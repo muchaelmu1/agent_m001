@@ -11,7 +11,7 @@ form_signup.addEventListener("submit", (e) => {
           const confirm_password = document.getElementById('signup-confirm');
           const terms = document.getElementById('terms');
           const error = document.getElementById('signup-general-error'); 
-          const response = await fetch("http://localhost:8080/api/auth/signup",{
+          const response = await fetch("http://serveai-2.onrender.com/api/auth/signup",{
             method: "POST",
             headers: {
               'Content-Type': 'application/json'
@@ -44,7 +44,7 @@ form_signin.addEventListener("submit", (e)=>{
       const email = document.getElementById('login-email');
       const password = document.getElementById('login-password');
       const remember_me = document.getElementById('remember-me');
-      const response = await fetch('http://localhost:8080/api/auth/signin',{
+      const response = await fetch('https://serveai-2.onrender.com/api/auth/signin',{
        method: "POST",
        headers: {
          "Content-Type": "application/json"
