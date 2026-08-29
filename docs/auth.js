@@ -1,14 +1,14 @@
 
-const form_signup = document.getElementById('login-form');
+const form_signup = document.getElementById('signup-form');
 
 form_signup.addEventListener("submit", (e) => {
   e.preventDefault();
     try {
-            const username = document.getElementById("signup-name");
-          const email = document.getElementById('signup-email');
-          const signup_company = document.getElementById('signup-company');
-          const signup_password = document.getElementById('signup-password');
-          const confirm_password = document.getElementById('signup-confirm');
+            const username = document.getElementById("signup-name").value;
+          const email = document.getElementById('signup-email').value;
+          const signup_company = document.getElementById('signup-company').value;
+          const signup_password = document.getElementById('signup-password').value;
+          const confirm_password = document.getElementById('signup-confirm').value;
           const terms = document.getElementById('terms');
           const error = document.getElementById('signup-general-error'); 
           const response = await fetch("http://serveai-2.onrender.com/api/auth/signup",{
@@ -21,8 +21,7 @@ form_signup.addEventListener("submit", (e) => {
               email,
               password,
               signup_company,
-              confirm_password,
-              terms
+              confirm_password
             })
           });
           const result = await response.json();
@@ -66,6 +65,7 @@ form_signin.addEventListener("submit", (e)=>{
   
 });
 
+
 // Toggle between login and signup forms
 function toggleForm() {
   document.getElementById('login-panel').classList.toggle('hidden');
@@ -75,7 +75,7 @@ function toggleForm() {
 
 // Toggle forgot password
 function toggleForgot(e) {
-  if (e) e.preventDefault();
+  if (e){ e.preventDefault();}
   
   document.getElementById('login-panel').classList.toggle('hidden');
   document.getElementById('forgot-panel').classList.toggle('hidden');
