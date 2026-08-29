@@ -1,4 +1,4 @@
-import Agent from '../models/Agent.js';
+import Agent from '../models/Agent.model.js';
 
 // Get all agents
 export const getAgents = async (req, res) => {

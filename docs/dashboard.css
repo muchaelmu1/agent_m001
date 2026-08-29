@@ -1,3 +1,4 @@
+
  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
 
   :root{
@@ -217,7 +218,12 @@
 .dashboard-section{
   width: 100%;
 }
-.section-group{
+
+.form-group{
+  display: flex;
+  gap: 1.2rem;
+}
+.setting-group{
   padding: 12px;
   align-items: center;
     display:grid;
@@ -228,11 +234,44 @@
     border-radius:8px;
     overflow:hidden;
 }
+.toggle-setting input[type="checkbox"]{ 
+  background: rgba(14,20,32,0.6);
+  border: 1px solid var(--panel-line);
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text);
+  transition: all 0.2s ease;
+  outline: none;
+}
 .setting-label{
   display: flex;
   flex-direction: column;
   gap: .9em;
 }
+.add-agent {
+    /* Change absolute to fixed so it locks to the center of the mobile screen */
+    position: fixed; 
+    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    height: auto;
+    display: none; /* JavaScript will override this to 'flex' */
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 14px 12px;
+    background: var(--panel);
+    border-radius: 10px;
+    
+    /* Crucial for popups to sit on top of everything else */
+    z-index: 1000; 
+}
+
  @media (max-width:720px){
     .nav-links{ display:none; }
   }
@@ -394,15 +433,9 @@
       position: fixed;
       top: 100%;
       left: 0;
-      right: 0;
     }
     .sidebar.active{
       display: flex;
-      flex-direction: column;
-      position: fixed;
-      top: 100%;
-      left: 0;
-      right: 0;
     }
   
 }
@@ -688,11 +721,21 @@
     text-align:center;
     padding:96px 32px;
   }
-  .cta-band h2{ margin-bottom:16px; }
-  .cta-band p{ color:var(--muted); margin-bottom:36px; max-width:52ch; margin-left:auto; margin-right:auto; }
+  .cta-band h2{ 
+    margin-bottom:16px; 
+  }
+  .cta-band p{ 
+    color:var(--muted); 
+    margin-bottom:36px; 
+    max-width:52ch; 
+    margin-left:auto; 
+    margin-right:auto; 
+  }
 
   /* Footer */
-  footer{ padding:48px 0; }
+  footer{ 
+    padding:48px 0; 
+  }
   footer .wrap{
     display:flex;
     justify-content:space-between;
@@ -700,4 +743,8 @@
     flex-wrap:wrap;
     gap:16px;
   }
-  footer .fine{ font-family:var(--mono); font-size:12px; color:var(--muted); }
+  footer .fine{ 
+    font-family:var(--mono); 
+    font-size:12px; 
+    color:var(--muted);
+  }

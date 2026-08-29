@@ -22,4 +22,3 @@ router.put('/tasks/:id', updateTaskStatus);
 
 export default router;
 
-export default router;

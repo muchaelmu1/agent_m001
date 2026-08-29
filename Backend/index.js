@@ -1,10 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import connectDB from './config/database.js';
+import connectDB from './config/db.js';
 
+import Auth from './Routes/Auth.js'
 import serveaiRoutes from './Routes/serveai.js';
-import agentRoutes from './Routes/agent.js';
+import agentRoutes from './Routes/agent.route.js';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'ServeAI Backend is running smoothly!' });
 });
 
+app.use('/api/auth', Auth)
 app.use('/api/serveai', serveaiRoutes);
 app.use('/api/agents', agentRoutes);
 

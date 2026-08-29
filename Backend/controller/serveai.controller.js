@@ -1,6 +1,6 @@
 import Task from '../models/Task.js';
-import Agent from '../models/Agent.js';
-import Activity from '../models/Activity.js';
+import Agent from '../models/Agent.model.js';
+import Activity from '../models/Activity.model.js';
 import { OpenAI } from 'openai';
 
 const openai = new OpenAI({

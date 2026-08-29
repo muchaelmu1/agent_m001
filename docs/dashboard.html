@@ -153,14 +153,19 @@
     <section id="agents-section" class="dashboard-section">
       <div class="section-header">
         <h1>Agent Management</h1>
-        <button class="btn-primary">+ Add Agent</button>
+        <button class="btn-primary" id="btn_primary">+ Add Agent</button>
       </div>
 
       <div class="agents-grid" id="agents-grid">
         <!-- Populated by JS -->
       </div>
     </section>
-
+    <div id="add_agent" class="add-agent">
+      <h3>create new agent</h3>
+      <label for="title">agent number</label>
+      <input type="number" id="agent_id" max=100 required>
+      <button type="submit" class="btn-primary" id="create_agent">create</button>
+    </div>
     <!-- Tasks Section -->
     <section id="tasks-section" class="dashboard-section">
       <div class="section-header">
@@ -262,7 +267,7 @@
           </form>
         </div>
 
-        <div class="setting-group">
+        <div class="setting-group tog">
           <div class="setting-label">
             <h3>Notification Preferences</h3>
             <p>Choose how we keep you updated</p>
@@ -272,7 +277,7 @@
             <span class="toggle-label">Email alerts for escalations</span>
           </label>
           <label class="toggle-setting">
-            <input type="checkbox" checked>
+            <input type="checkbox">
             <span class="toggle-label">Daily summary reports</span>
           </label>
           <label class="toggle-setting">
