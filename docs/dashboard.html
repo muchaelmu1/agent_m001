@@ -3,302 +3,1796 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serveai — Dashboard</title>
+<title>ServeAI — Dashboard</title>
 <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
+
 <a href="#main" class="skip-link">Skip to content</a>
 
+<!-- =====================================================
+     TOP NAVIGATION
+===================================================== -->
 <nav class="dashboard-nav" aria-label="Primary">
+
   <div class="wrap nav-wrap">
+
     <div class="logo">serveai</div>
-    
+
     <div class="nav-center">
       <div class="nav-breadcrumb">Operations Dashboard</div>
     </div>
 
     <div class="nav-user">
-      <button class="user-menu-btn" id="user-menu-btn" aria-expanded="false">
+
+      <button
+        class="user-menu-btn"
+        id="user-menu-btn"
+        aria-expanded="false"
+        type="button"
+      >
         <div class="user-avatar" id="user-avatar">D</div>
         <span class="user-name" id="user-name">Demo User</span>
         <span class="dropdown-arrow">▼</span>
       </button>
+
       <div class="user-dropdown" id="user-dropdown">
-        <a href="#profile-settings" class="dropdown-item">Profile Settings</a>
-        <a href="#" class="dropdown-item">Billing</a>
-        <a href="#" class="dropdown-item">Team</a>
+
+        <a href="#profile-settings" class="dropdown-item">
+          Profile Settings
+        </a>
+
+        <a href="#billing-section" class="dropdown-item">
+          Billing
+        </a>
+
+        <a href="#team-section" class="dropdown-item">
+          Team
+        </a>
+
         <div class="dropdown-divider"></div>
-        <button class="dropdown-item logout-btn" id="logout-btn">Sign Out</button>
+
+        <button
+          class="dropdown-item logout-btn"
+          id="logout-btn"
+          type="button"
+        >
+          Sign Out
+        </button>
+
       </div>
+
     </div>
+
   </div>
+
 </nav>
 
+
+<!-- =====================================================
+     DASHBOARD LAYOUT
+===================================================== -->
+
 <div class="dashboard-layout">
-  <button class="menu-btn" id="menu-btn" aria-expanded="false">menu</button>
+
+  <button
+    class="menu-btn"
+    id="menu-btn"
+    aria-expanded="false"
+    type="button"
+  >
+    menu
+  </button>
+
+
+  <!-- ===================================================
+       SIDEBAR
+  ==================================================== -->
+
   <aside class="sidebar">
+
     <nav class="sidebar-nav">
-      <a href="#" class="nav-item active" data-section="overview">
+
+      <a
+        href="#"
+        class="nav-item active"
+        data-section="overview"
+      >
         <span class="icon">📊</span>
         <span>Overview</span>
       </a>
-      <a href="#" class="nav-item" data-section="agents">
+
+
+      <a
+        href="#"
+        class="nav-item"
+        data-section="agents"
+      >
         <span class="icon">🤖</span>
         <span>Agents</span>
       </a>
-      <a href="#" class="nav-item" data-section="tasks">
+
+
+      <a
+        href="#"
+        class="nav-item"
+        data-section="tasks"
+      >
         <span class="icon">✓</span>
         <span>Tasks</span>
       </a>
-      <a href="#" class="nav-item" data-section="integrations">
+
+
+      <a
+        href="#"
+        class="nav-item"
+        data-section="logs"
+      >
+        <span class="icon">▤</span>
+        <span>Logs</span>
+      </a>
+
+
+      <a
+        href="#"
+        class="nav-item"
+        data-section="integrations"
+      >
         <span class="icon">⚡</span>
         <span>Integrations</span>
       </a>
-      <a href="#" class="nav-item" data-section="settings">
+
+
+      <a
+        href="#"
+        class="nav-item"
+        data-section="team"
+      >
+        <span class="icon">👥</span>
+        <span>Team</span>
+      </a>
+
+
+      <a
+        href="#"
+        class="nav-item"
+        data-section="billing"
+      >
+        <span class="icon">💳</span>
+        <span>Billing</span>
+      </a>
+
+
+      <a
+        href="#"
+        class="nav-item"
+        data-section="settings"
+      >
         <span class="icon">⚙</span>
         <span>Settings</span>
       </a>
+
     </nav>
 
+
+    <!-- SIDEBAR FOOTER -->
+
     <div class="sidebar-footer">
+
       <div class="upgrade-card">
-        <div class="upgrade-tag">Starter Plan</div>
-        <p>Upgrade to Growth for more agents</p>
-        <a href="#" class="btn-primary" style="width: 100%; text-align: center;">Upgrade →</a>
+
+        <div class="upgrade-tag">
+          Starter Plan
+        </div>
+
+        <p>
+          Upgrade to Growth for more agents
+        </p>
+
+        <a
+          href="#billing-section"
+          id="show"
+          class="btn-primary"
+          style="width:100%; text-align:center;"
+        >
+          Upgrade →
+        </a>
+
       </div>
+
     </div>
+
   </aside>
 
+
+
+  <!-- ===================================================
+       MAIN CONTENT
+  ==================================================== -->
+
   <main id="main" class="dashboard-main">
-    <!-- Overview Section -->
-    <section id="overview-section" class="dashboard-section active">
+
+
+    <!-- =================================================
+         OVERVIEW
+    ================================================== -->
+
+    <section
+      id="overview-section"
+      class="dashboard-section active"
+    >
+
       <div class="section-header">
-        <h1>Operations Overview</h1>
-        <p class="section-subtitle">Real-time metrics from your agent fleet</p>
+
+        <h1>
+          Operations Overview
+        </h1>
+
+        <p class="section-subtitle">
+          Real-time metrics from your agent fleet
+        </p>
+
       </div>
+
+
+      <!-- METRICS -->
 
       <div class="metrics-grid">
-        <div class="metric-card">
-          <div class="metric-header">
-            <span class="metric-label">Active Agents</span>
-            <span class="metric-status online">● Online</span>
-          </div>
-          <div class="metric-value">3</div>
-          <div class="metric-detail">All agents operational</div>
-        </div>
 
         <div class="metric-card">
+
           <div class="metric-header">
-            <span class="metric-label">Tasks Today</span>
-            <span class="metric-trend">↑ 12% vs yesterday</span>
+
+            <span class="metric-label">
+              Active Agents
+            </span>
+
+            <span class="metric-status online">
+              ● Online
+            </span>
+
           </div>
-          <div class="metric-value">847</div>
-          <div class="metric-detail">Processed and logged</div>
+
+          <div
+            class="metric-value"
+            id="active-agent-metric"
+          >
+            3
+          </div>
+
+          <div class="metric-detail">
+            All agents operational
+          </div>
+
         </div>
 
-        <div class="metric-card">
-          <div class="metric-header">
-            <span class="metric-label">Resolution Rate</span>
-            <span class="metric-status success">✓ Exceeding</span>
-          </div>
-          <div class="metric-value">68%</div>
-          <div class="metric-detail">Without human escalation</div>
-        </div>
 
         <div class="metric-card">
+
           <div class="metric-header">
-            <span class="metric-label">Avg Response Time</span>
-            <span class="metric-status">⚡ Fast</span>
+
+            <span class="metric-label">
+              Tasks Today
+            </span>
+
+            <span class="metric-trend">
+              ↑ 12% vs yesterday
+            </span>
+
           </div>
-          <div class="metric-value">42s</div>
-          <div class="metric-detail">From received to first action</div>
+
+          <div
+            class="metric-value"
+            id="tasks-today-metric"
+          >
+            847
+          </div>
+
+          <div class="metric-detail">
+            Processed and logged
+          </div>
+
         </div>
+
+
+        <div class="metric-card">
+
+          <div class="metric-header">
+
+            <span class="metric-label">
+              Resolution Rate
+            </span>
+
+            <span class="metric-status success">
+              ✓ Exceeding
+            </span>
+
+          </div>
+
+          <div class="metric-value">
+            68%
+          </div>
+
+          <div class="metric-detail">
+            Without human escalation
+          </div>
+
+        </div>
+
+
+        <div class="metric-card">
+
+          <div class="metric-header">
+
+            <span class="metric-label">
+              Avg Response Time
+            </span>
+
+            <span class="metric-status">
+              ⚡ Fast
+            </span>
+
+          </div>
+
+          <div class="metric-value">
+            42s
+          </div>
+
+          <div class="metric-detail">
+            From received to first action
+          </div>
+
+        </div>
+
       </div>
 
-      <!-- Live Activity Console -->
+
+
+      <!-- LIVE ACTIVITY -->
+
       <div class="activity-section">
+
         <div class="activity-header">
-          <h2>Live Activity Log</h2>
+
+          <h2>
+            Live Activity Log
+          </h2>
+
           <div class="filter-controls">
-            <select class="filter-select" id="agent-filter">
-              <option value="">All Agents</option>
-              <option value="AGENT-03">AGENT-03</option>
-              <option value="AGENT-07">AGENT-07</option>
-              <option value="AGENT-11">AGENT-11</option>
+
+            <select
+              class="filter-select"
+              id="agent-filter"
+            >
+
+              <option value="">
+                All Agents
+              </option>
+
+              <option value="AGENT-03">
+                AGENT-03
+              </option>
+
+              <option value="AGENT-07">
+                AGENT-07
+              </option>
+
+              <option value="AGENT-11">
+                AGENT-11
+              </option>
+
             </select>
+
           </div>
+
         </div>
+
+
         <div class="console">
+
           <div class="console-head">
-            <span>ops-log · live</span>
-            <span class="live"><span class="live-dot"></span><span id="active-count">3</span> agents active</span>
+
+            <span>
+              ops-log · live
+            </span>
+
+            <span class="live">
+
+              <span class="live-dot"></span>
+
+              <span id="active-count">
+                3
+              </span>
+
+              agents active
+
+            </span>
+
           </div>
-          <div class="console-body" id="dashboard-log-body"></div>
+
+
+          <div
+            class="console-body"
+            id="dashboard-log-body"
+          >
+          </div>
+
         </div>
+
       </div>
 
-      <!-- Recent Tasks -->
+
+
+      <!-- RECENT TASKS -->
+
       <div class="activity-section">
+
         <div class="activity-header">
-          <h2>Recent Tasks</h2>
-          <a href="#" class="view-all-link">View all →</a>
+
+          <h2>
+            Recent Tasks
+          </h2>
+
+          <a
+            href="#"
+            class="view-all-link"
+            data-section-link="tasks"
+          >
+            View all →
+          </a>
+
         </div>
-        <div class="task-list" id="task-list">
+
+        <div
+          class="task-list"
+          id="task-list"
+        >
           <!-- Populated by JS -->
         </div>
+
       </div>
+
     </section>
 
-    <!-- Agents Section -->
-    <section id="agents-section" class="dashboard-section">
+
+
+    <!-- =================================================
+         AGENTS
+    ================================================== -->
+
+    <section
+      id="agents-section"
+      class="dashboard-section"
+    >
+
       <div class="section-header">
-        <h1>Agent Management</h1>
-        <button class="btn-primary" id="btn_primary">+ Add Agent</button>
+
+        <h1>
+          Agent Management
+        </h1>
+
+        <button
+          class="btn-primary"
+          id="btn_primary"
+          type="button"
+        >
+          + Add Agent
+        </button>
+
       </div>
 
-      <div class="agents-grid" id="agents-grid">
+
+      <div
+        class="agents-grid"
+        id="agents-grid"
+      >
         <!-- Populated by JS -->
       </div>
-    </section>
-    <div id="add_agent" class="add-agent">
-      <h3>create new agent</h3>
-      <label for="title">agent number</label>
-      <input type="number" id="agent_id" max=100 required>
-      <button type="submit" class="btn-primary" id="create_agent">create</button>
-    </div>
-    <!-- Tasks Section -->
-    <section id="tasks-section" class="dashboard-section">
-      <div class="section-header">
-        <h1>All Tasks</h1>
-        <div class="filter-bar">
-          <select class="filter-select">
-            <option>All Status</option>
-            <option>Resolved</option>
-            <option>Working</option>
-            <option>Escalated</option>
-          </select>
-        </div>
+
+
+      <!-- CREATE AGENT -->
+
+      <div
+        id="add_agent"
+        class="add-agent"
+      >
+
+        <h3>
+          Create New Agent
+        </h3>
+
+        <label for="agent_id">
+          Agent number
+        </label>
+
+        <input
+          type="number"
+          id="agent_id"
+          min="1"
+          max="100"
+          required
+        >
+
+        <button
+          type="button"
+          class="btn-primary"
+          id="create_agent"
+        >
+          Create
+        </button>
+
       </div>
 
+    </section>
+
+
+
+    <!-- =================================================
+         TASKS
+    ================================================== -->
+
+    <section
+      id="tasks-section"
+      class="dashboard-section"
+    >
+
+      <div class="section-header">
+
+        <h1>
+          All Tasks
+        </h1>
+
+        <div class="filter-bar">
+
+          <select
+            class="filter-select"
+            id="task-status-filter"
+          >
+
+            <option value="">
+              All Status
+            </option>
+
+            <option value="resolved">
+              Resolved
+            </option>
+
+            <option value="working">
+              Working
+            </option>
+
+            <option value="escalated">
+              Escalated
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+
       <div class="table-wrapper">
+
         <table class="data-table">
+
           <thead>
+
             <tr class="table_row">
-              <th>Task ID</th>
-              <th>Agent</th>
-              <th>Type</th>
-              <th>Status</th>
-              <th>Created</th>
-              <th>Action</th>
+
+              <th>
+                Task ID
+              </th>
+
+              <th>
+                Agent
+              </th>
+
+              <th>
+                Type
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Created
+              </th>
+
+              <th>
+                Action
+              </th>
+
             </tr>
+
           </thead>
+
+
           <tbody id="tasks-table-body">
             <!-- Populated by JS -->
           </tbody>
+
         </table>
+
       </div>
+
     </section>
 
-    <!-- Integrations Section -->
-    <section id="integrations-section" class="dashboard-section">
+
+
+    <!-- =================================================
+         LOGS
+    ================================================== -->
+
+    <section
+      id="logs-section"
+      class="dashboard-section"
+    >
+
       <div class="section-header">
-        <h1>Connected Integrations</h1>
-        <button class="btn-primary">+ Connect Service</button>
+
+        <h1>
+          Activity Logs
+        </h1>
+
+        <p class="section-subtitle">
+          Complete activity history from your agent fleet
+        </p>
+
       </div>
 
-      <div class="integrations-grid" id="integrations-grid">
+
+      <!-- LOG CONTROLS -->
+
+      <div class="activity-header">
+
+        <input
+          type="search"
+          id="log-search"
+          class="filter-select"
+          placeholder="Search logs..."
+          aria-label="Search logs"
+        >
+
+
+        <select
+          id="log-agent-filter"
+          class="filter-select"
+        >
+
+          <option value="">
+            All Agents
+          </option>
+
+          <option value="AGENT-03">
+            AGENT-03
+          </option>
+
+          <option value="AGENT-07">
+            AGENT-07
+          </option>
+
+          <option value="AGENT-11">
+            AGENT-11
+          </option>
+
+        </select>
+
+
+        <select
+          id="log-status-filter"
+          class="filter-select"
+        >
+
+          <option value="">
+            All Status
+          </option>
+
+          <option value="done">
+            Done
+          </option>
+
+          <option value="working">
+            Working
+          </option>
+
+          <option value="flag">
+            Flagged
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- LOG CONSOLE -->
+
+      <div class="console">
+
+        <div class="console-head">
+
+          <span>
+            system-log
+          </span>
+
+          <span class="live">
+            <span class="live-dot"></span>
+            LIVE
+          </span>
+
+        </div>
+
+
+        <div
+          class="console-body"
+          id="logs-console-body"
+        >
+
+          <div class="log-line">
+
+            <span class="ts">
+              14:32:09
+            </span>
+
+            <span class="agent">
+              AGENT-03
+            </span>
+
+            <span>
+              Task received
+            </span>
+
+            <span class="status done">
+              DONE
+            </span>
+
+          </div>
+
+
+          <div class="log-line">
+
+            <span class="ts">
+              14:31:44
+            </span>
+
+            <span class="agent">
+              AGENT-07
+            </span>
+
+            <span>
+              Email processed
+            </span>
+
+            <span class="status done">
+              DONE
+            </span>
+
+          </div>
+
+
+          <div class="log-line">
+
+            <span class="ts">
+              14:30:12
+            </span>
+
+            <span class="agent">
+              AGENT-11
+            </span>
+
+            <span>
+              Task escalated
+            </span>
+
+            <span class="status flag">
+              FLAG
+            </span>
+
+          </div>
+
+
+          <div class="log-line">
+
+            <span class="ts">
+              14:29:51
+            </span>
+
+            <span class="agent">
+              AGENT-03
+            </span>
+
+            <span>
+              Processing request
+            </span>
+
+            <span class="status working">
+              WORKING
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         INTEGRATIONS
+    ================================================== -->
+
+    <section
+      id="integrations-section"
+      class="dashboard-section"
+    >
+
+      <div class="section-header">
+
+        <h1>
+          Connected Integrations
+        </h1>
+
+        <p class="section-subtitle">
+          Connect external services to your agent fleet
+        </p>
+
+      </div>
+
+
+      <div
+        class="integrations-grid"
+        id="integrations-grid"
+      >
+
+
+        <!-- EMAIL -->
+
         <div class="integration-card connected">
-          <div class="integration-icon">📧</div>
-          <h3>Email</h3>
-          <p class="integration-status">Connected to ops@company.com</p>
-          <button class="btn-ghost" style="width: 100%; margin-top: 12px;">Configure</button>
+
+          <div class="integration-icon">
+            📧
+          </div>
+
+          <h3>
+            Email
+          </h3>
+
+          <p class="integration-status">
+            Connected to ops@company.com
+          </p>
+
+          <button
+            class="btn-ghost"
+            type="button"
+            style="width:100%; margin-top:12px;"
+          >
+            Configure
+          </button>
+
         </div>
 
-        <div class="integration-card">
-          <div class="integration-icon">🎫</div>
-          <h3>Ticketing</h3>
-          <p class="integration-status muted">Not connected</p>
-          <button class="btn-primary" style="width: 100%; margin-top: 12px;">Connect</button>
-        </div>
+
+        <!-- TICKETING -->
 
         <div class="integration-card">
-          <div class="integration-icon">📊</div>
-          <h3>Analytics</h3>
-          <p class="integration-status muted">Not connected</p>
-          <button class="btn-primary" style="width: 100%; margin-top: 12px;">Connect</button>
+
+          <div class="integration-icon">
+            🎫
+          </div>
+
+          <h3>
+            Ticketing
+          </h3>
+
+          <p class="integration-status muted">
+            Not connected
+          </p>
+
+          <button
+            class="btn-primary"
+            type="button"
+            style="width:100%; margin-top:12px;"
+          >
+            Connect
+          </button>
+
         </div>
 
+
+        <!-- ANALYTICS -->
+
         <div class="integration-card">
-          <div class="integration-icon">💳</div>
-          <h3>Billing</h3>
-          <p class="integration-status muted">Not connected</p>
-          <button class="btn-primary" style="width: 100%; margin-top: 12px;">Connect</button>
+
+          <div class="integration-icon">
+            📊
+          </div>
+
+          <h3>
+            Analytics
+          </h3>
+
+          <p class="integration-status muted">
+            Not connected
+          </p>
+
+          <button
+            class="btn-primary"
+            type="button"
+            style="width:100%; margin-top:12px;"
+          >
+            Connect
+          </button>
+
         </div>
+
+
+        <!-- BILLING -->
+
+        <div class="integration-card">
+
+          <div class="integration-icon">
+            💳
+          </div>
+
+          <h3>
+            Billing
+          </h3>
+
+          <p class="integration-status muted">
+            Not connected
+          </p>
+
+          <button
+            class="btn-primary"
+            type="button"
+            style="width:100%; margin-top:12px;"
+          >
+            Connect
+          </button>
+
+        </div>
+
+
       </div>
+
     </section>
 
-    <!-- Settings Section -->
-    <section id="profile-settings" class="dashboard-section">
+
+
+    <!-- =================================================
+         TEAM
+    ================================================== -->
+
+    <section
+      id="team-section"
+      class="dashboard-section"
+    >
+
       <div class="section-header">
-        <h1>Settings</h1>
+
+        <h1>
+          Team
+        </h1>
+
+        <button
+          class="btn-primary"
+          id="invite-member"
+          type="button"
+        >
+          + Invite Member
+        </button>
+
       </div>
+
+
+      <div class="team-summary">
+
+        <div class="metric-card">
+
+          <span class="metric-label">
+            Team Members
+          </span>
+
+          <div class="metric-value">
+            4
+          </div>
+
+          <div class="metric-detail">
+            Active members
+          </div>
+
+        </div>
+
+
+        <div class="metric-card">
+
+          <span class="metric-label">
+            Available Seats
+          </span>
+
+          <div class="metric-value">
+            6
+          </div>
+
+          <div class="metric-detail">
+            Remaining team seats
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- TEAM TABLE -->
+
+      <div class="table-wrapper">
+
+        <table class="data-table">
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Member
+              </th>
+
+              <th>
+                Email
+              </th>
+
+              <th>
+                Role
+              </th>
+
+              <th>
+                Status
+              </th>
+
+              <th>
+                Action
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            <tr>
+
+              <td>
+                Michael
+              </td>
+
+              <td>
+                owner@mikeservices.com
+              </td>
+
+              <td>
+                Owner
+              </td>
+
+              <td>
+                <span class="metric-status online">
+                  ● Active
+                </span>
+              </td>
+
+              <td>
+                —
+              </td>
+
+            </tr>
+
+
+            <tr>
+
+              <td>
+                John
+              </td>
+
+              <td>
+                john@example.com
+              </td>
+
+              <td>
+                Admin
+              </td>
+
+              <td>
+                <span class="metric-status online">
+                  ● Active
+                </span>
+              </td>
+
+              <td>
+                <button class="btn-ghost" type="button">
+                  Manage
+                </button>
+              </td>
+
+            </tr>
+
+
+            <tr>
+
+              <td>
+                Mary
+              </td>
+
+              <td>
+                mary@example.com
+              </td>
+
+              <td>
+                Agent
+              </td>
+
+              <td>
+                <span class="metric-status online">
+                  ● Active
+                </span>
+              </td>
+
+              <td>
+                <button class="btn-ghost" type="button">
+                  Manage
+                </button>
+              </td>
+
+            </tr>
+
+
+            <tr>
+
+              <td>
+                David
+              </td>
+
+              <td>
+                david@example.com
+              </td>
+
+              <td>
+                Viewer
+              </td>
+
+              <td>
+                <span class="metric-status">
+                  ● Offline
+                </span>
+              </td>
+
+              <td>
+                <button class="btn-ghost" type="button">
+                  Manage
+                </button>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         BILLING
+    ================================================== -->
+
+    <section
+      id="billing-section"
+      class="dashboard-section"
+    >
+
+      <div class="section-header">
+
+        <h1>
+          Billing & Subscription
+        </h1>
+
+        <p class="section-subtitle">
+          Manage your ServeAI subscription and payments
+        </p>
+
+      </div>
+
+
+      <!-- CURRENT PLAN -->
+
+      <div class="plan featured">
+
+        <div class="plan-name">
+          Current Plan
+        </div>
+
+        <div class="plan-price">
+
+          <span class="amount">
+            Starter
+          </span>
+
+        </div>
+
+        <p class="plan-desc">
+          Your current ServeAI subscription.
+        </p>
+
+
+        <ul class="plan-features">
+
+          <li>
+            3 agents
+          </li>
+
+          <li>
+            Basic activity logs
+          </li>
+
+          <li>
+            Standard support
+          </li>
+
+          <li>
+            Basic integrations
+          </li>
+
+        </ul>
+
+
+        <button
+          class="plan-cta"
+          type="button"
+          id="billing-upgrade-btn"
+        >
+          Upgrade Plan
+        </button>
+
+      </div>
+
+
+
+      <!-- AVAILABLE PLANS -->
+
+      <div class="section-head">
+
+        <div class="section-tag">
+          Available Plans
+        </div>
+
+        <h2>
+          Choose your plan
+        </h2>
+
+        <p>
+          Upgrade your workspace when your agent fleet grows.
+        </p>
+
+      </div>
+
+
+      <div class="pricing-grid">
+
+
+        <!-- STARTER -->
+
+        <div class="plan">
+
+          <div class="plan-name">
+            Starter
+          </div>
+
+          <div class="plan-price">
+
+            <span class="amount">
+              KSh 0
+            </span>
+
+            <span class="period">
+              /month
+            </span>
+
+          </div>
+
+          <p class="plan-desc">
+            For getting started with ServeAI.
+          </p>
+
+
+          <ul class="plan-features">
+
+            <li>
+              3 agents
+            </li>
+
+            <li>
+              Basic logs
+            </li>
+
+            <li>
+              Basic integrations
+            </li>
+
+          </ul>
+
+
+          <button
+            class="plan-cta"
+            type="button"
+            disabled
+          >
+            Current Plan
+          </button>
+
+        </div>
+
+
+
+        <!-- GROWTH -->
+
+        <div class="plan featured">
+
+          <div class="plan-name">
+            Growth
+          </div>
+
+          <div class="plan-price">
+
+            <span class="amount">
+              KSh 600
+            </span>
+
+            <span class="period">
+              /month
+            </span>
+
+          </div>
+
+          <p class="plan-desc">
+            For growing agent operations.
+          </p>
+
+
+          <ul class="plan-features">
+
+            <li>
+              More agents
+            </li>
+
+            <li>
+              Extended logs
+            </li>
+
+            <li>
+              Team management
+            </li>
+
+            <li>
+              More integrations
+            </li>
+
+          </ul>
+
+
+          <button
+            class="plan-cta"
+            type="button"
+            data-plan="growth"
+            data-price="600"
+          >
+            Upgrade
+          </button>
+
+        </div>
+
+
+
+        <!-- PRO -->
+
+        <div class="plan">
+
+          <div class="plan-name">
+            Pro
+          </div>
+
+          <div class="plan-price">
+
+            <span class="amount">
+              KSh 1,200
+            </span>
+
+            <span class="period">
+              /month
+            </span>
+
+          </div>
+
+          <p class="plan-desc">
+            For larger automated operations.
+          </p>
+
+
+          <ul class="plan-features">
+
+            <li>
+              Larger agent fleet
+            </li>
+
+            <li>
+              Advanced logs
+            </li>
+
+            <li>
+              Priority support
+            </li>
+
+            <li>
+              Advanced integrations
+            </li>
+
+          </ul>
+
+
+          <button
+            class="plan-cta"
+            type="button"
+            data-plan="pro"
+            data-price="1200"
+          >
+            Upgrade
+          </button>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- PAYMENT HISTORY -->
+
+      <div class="activity-section">
+
+        <div class="activity-header">
+
+          <h2>
+            Payment History
+          </h2>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+          <table class="data-table">
+
+            <thead>
+
+              <tr>
+
+                <th>
+                  Date
+                </th>
+
+                <th>
+                  Package
+                </th>
+
+                <th>
+                  Amount
+                </th>
+
+                <th>
+                  Status
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody id="payment-history">
+
+              <tr>
+
+                <td>
+                  —
+                </td>
+
+                <td>
+                  No payments yet
+                </td>
+
+                <td>
+                  KSh 0
+                </td>
+
+                <td>
+                  —
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- M-PESA PAYMENT FORM -->
+
+      <form
+        class="subscription_container"
+        id="subscription-form"
+      >
+
+        <h1>
+          Subscription
+        </h1>
+
+        <h3>
+          Upgrade to premium for more services
+        </h3>
+
+
+        <input
+          type="tel"
+          placeholder="+254712345678"
+          id="phone_number"
+          required
+        >
+
+
+        <label for="subscription">
+          Choose package
+        </label>
+
+
+        <select id="subscription">
+
+          <option value="1200">
+            KSh 1,200 — Pro
+          </option>
+
+          <option value="600">
+            KSh 600 — Growth
+          </option>
+
+          <option value="300">
+            KSh 300
+          </option>
+
+        </select>
+
+
+        <button
+          id="subscribe"
+          class="btn-primary"
+          type="submit"
+        >
+          Purchase
+        </button>
+
+      </form>
+
+    </section>
+
+
+
+    <!-- =================================================
+         SETTINGS
+    ================================================== -->
+
+    <section
+      id="profile-settings"
+      class="dashboard-section"
+      data-section-id="settings"
+    >
+
+      <div class="section-header">
+
+        <h1>
+          Settings
+        </h1>
+
+        <p class="section-subtitle">
+          Manage your account and workspace preferences
+        </p>
+
+      </div>
+
+
+      <!-- COMPANY INFORMATION -->
 
       <div class="settings-panel">
+
         <div class="setting-group">
+
           <div class="setting-label">
-            <h3>Company Information</h3>
-            <p>Update your account details</p>
+
+            <h3>
+              Company Information
+            </h3>
+
+            <p>
+              Update your account details
+            </p>
+
           </div>
+
+
           <form class="settings-form">
+
             <div class="form-group">
-              <label>Company Name</label>
-              <input type="text" value="Demo Company" placeholder="Your company name">
+
+              <label for="company-name">
+                Company Name
+              </label>
+
+              <input
+                type="text"
+                id="company-name"
+                value="Demo Company"
+                placeholder="Your company name"
+              >
+
             </div>
+
+
             <div class="form-group">
-              <label>Industry</label>
-              <select>
-                <option>Select industry</option>
-                <option selected>Logistics</option>
-                <option>Healthcare</option>
-                <option>Retail</option>
+
+              <label for="industry">
+                Industry
+              </label>
+
+              <select id="industry">
+
+                <option>
+                  Select industry
+                </option>
+
+                <option selected>
+                  Logistics
+                </option>
+
+                <option>
+                  Healthcare
+                </option>
+
+                <option>
+                  Retail
+                </option>
+
               </select>
+
             </div>
-            <button type="submit" class="btn-primary">Save Changes</button>
+
+
+            <button
+              type="submit"
+              class="btn-primary"
+            >
+              Save Changes
+            </button>
+
           </form>
+
         </div>
+
+
+
+        <!-- NOTIFICATIONS -->
 
         <div class="setting-group tog">
+
           <div class="setting-label">
-            <h3>Notification Preferences</h3>
-            <p>Choose how we keep you updated</p>
+
+            <h3>
+              Notification Preferences
+            </h3>
+
+            <p>
+              Choose how we keep you updated
+            </p>
+
           </div>
+
+
           <label class="toggle-setting">
-            <input type="checkbox" checked>
-            <span class="toggle-label">Email alerts for escalations</span>
+
+            <input
+              type="checkbox"
+              checked
+            >
+
+            <span class="toggle-label">
+              Email alerts for escalations
+            </span>
+
           </label>
+
+
           <label class="toggle-setting">
+
             <input type="checkbox">
-            <span class="toggle-label">Daily summary reports</span>
+
+            <span class="toggle-label">
+              Daily summary reports
+            </span>
+
           </label>
+
+
           <label class="toggle-setting">
+
             <input type="checkbox">
-            <span class="toggle-label">Weekly performance reviews</span>
+
+            <span class="toggle-label">
+              Weekly performance reviews
+            </span>
+
           </label>
+
         </div>
 
+
+
+        <!-- DANGER ZONE -->
+
         <div class="setting-group danger">
+
           <div class="setting-label">
-            <h3>Danger Zone</h3>
-            <p>Irreversible actions</p>
+
+            <h3>
+              Danger Zone
+            </h3>
+
+            <p>
+              Irreversible actions
+            </p>
+
           </div>
-          <button class="btn-danger">Delete Account</button>
+
+
+          <button
+            class="btn-danger"
+            type="button"
+            id="delete-account"
+          >
+            Delete Account
+          </button>
+
         </div>
+
       </div>
+
     </section>
+
   </main>
+
 </div>
 
 
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script src="dashboard.js"></script>
+
 </body>
 </html>
