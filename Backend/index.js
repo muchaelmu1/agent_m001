@@ -35,8 +35,12 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Backend API is running' });
 });
 
-// SPA fallback - serve index.html for any unknown route (for client-side routing)
-app.get('*', (req, res) => {
+// SPA fallback - serve index.html for any unknown non-API route (for client-side routing)
+app.get('/*', (req, res) => {
+  // Avoid catching API routes
+  if (req.path && req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'Not found' });
+  }
   res.sendFile(path.join(__dirname, '..', 'docs', 'index.html'));
 });
 
