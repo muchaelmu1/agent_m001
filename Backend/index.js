@@ -35,13 +35,17 @@ app.get('/api', (req, res) => {
   res.json({ message: 'Backend API is running' });
 });
 
-// SPA fallback - serve index.html for any unknown non-API route (for client-side routing)
-app.get('/*', (req, res) => {
-  // Avoid catching API routes
-  if (req.path && req.path.startsWith('/api')) {
-    return res.status(404).json({ error: 'Not found' });
-  }
-  res.sendFile(path.join(__dirname, '..', 'docs', 'index.html'));
+// SPA fallback middleware — serve index.html for any unknown non-API route (for client-side routing)
+// Use a middleware instead of app.get with a path pattern to avoid path-to-regexp issues.
+app.use((req, res, next) => {
+  // If the request is for API, skip this middleware
+  if (req.path && req.path.startsWith('/api')) return next();
+
+  // If the request is for an existing static asset, let express.static handle it
+  // Otherwise, serve the SPA index.html
+  res.sendFile(path.join(__dirname, '..', 'docs', 'index.html'), (err) => {
+    if (err) next(err);
+  });
 });
 
 // Connect DB then start server
