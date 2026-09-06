@@ -1,78 +1,53 @@
-// Backend/index.js
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import connectDB from "./config/db.js";
-import { errorHandler } from "./middleware/errorHandler.middleware.js";
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import Auth from "./Routes/Auth.js";
-import agentRoutes from "./Routes/agent.route.js";
-import serveaiRoutes from "./Routes/serveai.js";
+import serveaiRouter from './Routes/serveai.js';
+import taskRouter from './Routes/Taskroute.js';
+import authRouter from './Routes/Auth.js';
+import connectDB from './config/db.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
-// Connect to MongoDB
-connectDB();
+// __dirname replacement for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Request logging middleware (development)
-if (process.env.NODE_ENV === "development") {
-  app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-    next();
+// Serve frontend static files from the repo's docs/ directory (one level up from Backend/)
+app.use(express.static(path.join(__dirname, '..', 'docs')));
+
+// Mount routers
+app.use('/api/auth', authRouter);
+app.use('/api/serveai', serveaiRouter);
+app.use('/api/tasks', taskRouter);
+
+// Sample API root
+app.get('/api', (req, res) => {
+  res.json({ message: 'Backend API is running' });
+});
+
+// SPA fallback - serve index.html for any unknown route (for client-side routing)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'docs', 'index.html'));
+});
+
+// Connect DB then start server
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
   });
-}
-
-// Health check
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "🚀 ServeAI Backend is running",
-    version: "1.0.0",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// Health check
-app.get("/health", (req, res) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() });
-});
-
-// API Routes
-app.use("/api/auth", Auth);
-app.use("/api/agents", agentRoutes);
-app.use("/api/serveai", serveaiRoutes);
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: "Route not found",
-    path: req.path,
-  });
-});
-
-// Error handling middleware (must be last)
-app.use(errorHandler);
-
-// Start Server
-app.listen(PORT, () => {
-  console.log(`\n${"=".repeat(50)}`);
-  console.log(`🚀 ServeAI Backend Server`);
-  console.log(`🌐 Running on http://localhost:${PORT}`);
-  console.log(`🔐 JWT Secret: ${process.env.JWT_SECRET ? "✅ Configured" : "❌ Missing"}`);
-  console.log(`🤖 OpenAI Key: ${process.env.openai_key ? "✅ Configured" : "❌ Missing"}`);
-  console.log(`${"=".repeat(50)}\n`);
-});
-
-// Handle unhandled promise rejections
-process.on("unhandledRejection", (err) => {
-  console.error("Unhandled Rejection:", err);
-});

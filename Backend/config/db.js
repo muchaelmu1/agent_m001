@@ -1,17 +1,19 @@
-// Backend/config/db.js
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-async function connectDB() {
+export default async function connectDB() {
+  const uri = process.env.MONGO_URI;
+  if (!uri) {
+    console.error('MONGO_URI is not defined in environment');
+    throw new Error('MONGO_URI not defined');
+  }
+
   try {
-    const connection = await mongoose.connect(process.env.MONGO_URI);
-    console.log(
-      `✅ MongoDB Connected: ${connection.connection.host}:${connection.connection.port}/${connection.connection.name}`
-    );
-    return connection;
+    await mongoose.connect(uri, {
+      // options can be added here if needed
+    });
+    console.log('MongoDB connected');
   } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error.message);
-    process.exit(1);
+    console.error('MongoDB connection error:', error.message);
+    throw error;
   }
 }
-
-export default connectDB;
