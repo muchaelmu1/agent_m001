@@ -1,0 +1,1 @@
+Redeploy triggered by GitHub Copilot on 2026-09-06T12:36:00Z to force Render rebuild and restart.
