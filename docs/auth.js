@@ -1,3 +1,5 @@
+const API_BASE = window.__API_BASE__ || '/api';
+
 const form_signup = document.getElementById('signup-form');
 
 form_signup.addEventListener('submit', async (e) => {
@@ -32,7 +34,7 @@ form_signup.addEventListener('submit', async (e) => {
         }
 
         const response = await fetch(
-            'https://serveai-2.onrender.com/api/auth/signup',
+            `${API_BASE}/auth/signup`,
             {
                 method: 'POST',
                 headers: {
@@ -98,7 +100,7 @@ form_signin.addEventListener('submit', async (e) => {
         }
 
         const response = await fetch(
-            'https://serveai-2.onrender.com/api/auth/signin',
+            `${API_BASE}/auth/signin`,
             {
                 method: 'POST',
                 headers: {
