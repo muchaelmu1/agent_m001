@@ -52,9 +52,16 @@ form_signup.addEventListener('submit', async (e) => {
         const result = await response.json();
 
         if (response.ok) {
-            // Store JWT returned by the backend
+            // Store JWT returned by the backend using the canonical key
             if (result.token) {
-                localStorage.setItem('token', result.token);
+                localStorage.setItem('serveai_token', result.token);
+            }
+            if (result.user) {
+                try {
+                    localStorage.setItem('serveai_user', JSON.stringify(result.user));
+                } catch (err) {
+                    console.warn('Unable to store user in localStorage', err);
+                }
             }
 
             errorElement.innerText =
@@ -117,9 +124,16 @@ form_signin.addEventListener('submit', async (e) => {
         const result = await response.json();
 
         if (response.ok) {
-            // Store JWT returned by the backend
+            // Store JWT returned by the backend using the canonical key
             if (result.token) {
-                localStorage.setItem('token', result.token);
+                localStorage.setItem('serveai_token', result.token);
+            }
+            if (result.user) {
+                try {
+                    localStorage.setItem('serveai_user', JSON.stringify(result.user));
+                } catch (err) {
+                    console.warn('Unable to store user in localStorage', err);
+                }
             }
 
             window.location.href = './dashboard.html';
