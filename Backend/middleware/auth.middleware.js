@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-export default function auth(req, res, next) {
+export function verifyToken(req, res, next) {
   const header = req.headers.authorization || req.headers.Authorization;
   if (!header || !header.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'No token provided' });
@@ -16,3 +16,5 @@ export default function auth(req, res, next) {
     return res.status(401).json({ error: 'Invalid token' });
   }
 }
+
+export default verifyToken;
