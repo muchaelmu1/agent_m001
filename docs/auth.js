@@ -1,4 +1,4 @@
-const API_BASE = window.__API_BASE__ || '/api';
+const API_BASE = window.__API_BASE__ || 'https://serveai-2.onrender.com/api';
 
 const form_signup = document.getElementById('signup-form');
 
@@ -32,6 +32,9 @@ form_signup.addEventListener('submit', async (e) => {
                 "Please accept the terms and conditions.";
             return;
         }
+
+        // Debug log for signup target
+        console.debug('Submitting signup to', `${API_BASE}/auth/signup`);
 
         const response = await fetch(
             `${API_BASE}/auth/signup`,
@@ -105,6 +108,9 @@ form_signin.addEventListener('submit', async (e) => {
                 "Please enter your email and password.";
             return;
         }
+
+        // Debug log for signin target
+        console.debug('Submitting signin to', `${API_BASE}/auth/signin`);
 
         const response = await fetch(
             `${API_BASE}/auth/signin`,
