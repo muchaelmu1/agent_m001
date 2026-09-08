@@ -56,7 +56,7 @@ const request = async (path, options = {}) => {
 	return body;
 };
 
-const dashboardState = { agents: [], tasks: [] };
+const dashboardState = { agents: [], tasks: [], activities: [] };
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({
 	'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
 }[character]));
@@ -122,12 +122,13 @@ const renderDashboardData = () => {
 };
 
 const loadDashboardData = async () => {
-	const [userResponse, agentsResponse, tasksResponse] = await Promise.all([
-		request('/auth/me'), request('/agents?limit=100'), request('/tasks?limit=100')
+	const [userResponse, agentsResponse, tasksResponse, activitiesResponse] = await Promise.all([
+		request('/auth/me'), request('/agents?limit=100'), request('/tasks?limit=100'), request('/tasks/activity?limit=100')
 	]);
 	const user = userResponse.user || userResponse.data || {};
 	dashboardState.agents = agentsResponse.data || agentsResponse.agents || [];
 	dashboardState.tasks = tasksResponse.data || tasksResponse.tasks || [];
+	dashboardState.activities = activitiesResponse.data || activitiesResponse.activities || [];
 	populateFilters();
 	const name = user.username || 'User';
 	document.getElementById('user-name')?.replaceChildren(document.createTextNode(name));
@@ -140,15 +141,16 @@ const renderLogData = () => {
 	const query = document.getElementById('log-search')?.value.trim().toLowerCase() || '';
 	const status = document.getElementById('log-status-filter')?.value || '';
 	const agent = document.getElementById('log-agent-filter')?.value.toLowerCase() || '';
-	const filteredTasks = dashboardState.tasks.filter((task) => {
-		const taskAgent = getAgentName(task).toLowerCase();
-		const searchable = `${task.title || ''} ${task.type || ''} ${taskAgent}`.toLowerCase();
-		return (!query || searchable.includes(query)) && (!status || task.status === status) && (!agent || taskAgent === agent);
+	const filteredActivities = dashboardState.activities.filter((activity) => {
+		const task = activity.taskId || {};
+		const taskAgent = (activity.agentId?.name || 'Unassigned').toLowerCase();
+		const searchable = `${activity.message || ''} ${task.title || ''} ${task.type || ''} ${taskAgent}`.toLowerCase();
+		return (!query || searchable.includes(query)) && (!status || task.status === status || activity.status === status) && (!agent || taskAgent === agent);
 	});
-	const markup = filteredTasks.map((task) => `
-		<div class="log-line"><span class="ts">${escapeHtml(new Date(task.createdAt || Date.now()).toLocaleTimeString())}</span>
-		<span class="agent">${escapeHtml(getAgentName(task))}</span><span>${escapeHtml(task.title || 'Task updated')}</span>
-		<span class="status ${escapeHtml(task.status || 'received')}">${escapeHtml((task.status || 'received').toUpperCase())}</span></div>
+	const markup = filteredActivities.map((activity) => `
+		<div class="log-line"><span class="ts">${escapeHtml(new Date(activity.timestamp || Date.now()).toLocaleTimeString())}</span>
+		<span class="agent">${escapeHtml(activity.agentId?.name || 'System')}</span><span>${escapeHtml(activity.message || activity.action || 'Activity')}</span>
+		<span class="status ${escapeHtml(activity.status || 'pending')}\">${escapeHtml((activity.status || 'pending').toUpperCase())}</span></div>
 	`).join('') || '<p>No matching activity.</p>';
 	['logs-console-body', 'dashboard-log-body'].forEach((id) => {
 		const consoleBody = document.getElementById(id);
@@ -184,7 +186,7 @@ document.getElementById('create_agent')?.addEventListener('click', async () => {
 	try {
 		await request('/agents', {
 			method: 'POST',
-			body: JSON.stringify({ name: `Agent ${number}`, role: 'operations' })
+			body: JSON.stringify({ name: `Agent ${number}`, role: 'assistant' })
 		});
 		if (input) input.value = '';
 		document.getElementById('add_agent')?.classList.remove('visible');
@@ -196,7 +198,7 @@ document.getElementById('create_agent')?.addEventListener('click', async () => {
 document.querySelectorAll('.nav-item, [data-section-link]').forEach((link) => link.addEventListener('click', (event) => {
 	event.preventDefault();
 	const section = link.dataset.section || link.dataset.sectionLink || (link.getAttribute('href') || '').replace('#', '');
-	const targetSection = section === 'profile-settings' ? 'settings' : section;
+	const targetSection = (section === 'profile-settings' ? 'settings' : section).replace(/-section$/, '');
 	document.querySelectorAll('.dashboard-section').forEach((item) => item.classList.toggle('active', item.id === `${targetSection}-section` || item.dataset.sectionId === targetSection));
 	document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.section === targetSection));
 	document.querySelector('.sidebar')?.classList.remove('active');

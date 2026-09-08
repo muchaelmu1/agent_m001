@@ -20,7 +20,7 @@ const ActivitySchema = new mongoose.Schema(
     },
     action: {
       type: String,
-      enum: ["created", "started", "completed", "failed", "escalated", "error"],
+      enum: ["created", "started", "status_update", "completed", "failed", "escalated", "error"],
       required: true,
     },
     status: {

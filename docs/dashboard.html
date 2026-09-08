@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ServeAI — Dashboard</title>
 <link rel="stylesheet" href="dashboard.css">
+<script>
+  if (!localStorage.getItem('serveai_token')) {
+    window.location.replace('./auth.html');
+  }
+</script>
 </head>
 
 <body>

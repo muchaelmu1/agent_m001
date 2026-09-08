@@ -1,60 +1,21 @@
 import express from 'express';
-import Task from '../models/Task.js';
 import auth from '../middleware/auth.middleware.js';
+import {
+  createTask,
+  getActivities,
+  getTaskById,
+  getTasks,
+  updateTaskStatus,
+} from '../controller/serveai.controller.js';
 
 const router = express.Router();
 
-// Create a new task (protected)
-router.post('/', auth, async (req, res) => {
-  try {
-    const { agentId, type, input, title, priority, tags } = req.body;
-    const userId = req.userId;
-
-    if (!agentId || !type || !input || !title) {
-      return res.status(400).json({ error: 'agentId, type, input, and title are required' });
-    }
-
-    const task = await Task.create({
-      title,
-      agentId,
-      userId,
-      type,
-      input,
-      priority: priority || 'normal',
-      tags: tags || [],
-    });
-
-    return res.status(201).json(task);
-  } catch (error) {
-    console.error('Task create error:', error);
-    return res.status(500).json({ error: error.message });
-  }
-});
+router.post('/', auth, createTask);
 
 // List tasks (protected)
-router.get('/', auth, async (req, res) => {
-  try {
-    const userId = req.userId;
-    const { status } = req.query;
-    const { page = 1, limit = 20 } = req.query;
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-    const query = { userId };
-    if (status) query.status = status;
-
-    const tasks = await Task.find(query)
-      .populate('agentId', 'name role')
-      .sort({ createdAt: -1 })
-      .limit(parseInt(limit))
-      .skip(skip)
-      .exec();
-
-    const total = await Task.countDocuments(query);
-
-    return res.json({ tasks, total, page: parseInt(page), limit: parseInt(limit) });
-  } catch (error) {
-    console.error('Task list error:', error);
-    return res.status(500).json({ error: error.message });
-  }
-});
+router.get('/', auth, getTasks);
+router.get('/activity', auth, getActivities);
+router.get('/:id', auth, getTaskById);
+router.patch('/:id/status', auth, updateTaskStatus);
 
 export default router;

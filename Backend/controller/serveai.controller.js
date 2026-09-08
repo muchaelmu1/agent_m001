@@ -70,6 +70,15 @@ export const createTask = async (req, res) => {
       tags: tags || [],
     });
 
+    await Activity.create({
+      agentId,
+      taskId: task._id,
+      userId,
+      action: "created",
+      status: "pending",
+      message: `Task "${title}" created and queued`,
+    });
+
     // Process task asynchronously if OpenAI client available
     if (openai) {
       processTaskWithAI(task._id, agentId, userId, type, input, title, agent);
@@ -112,6 +121,26 @@ export const getTasks = async (req, res) => {
     });
   } catch (error) {
     console.error("Get tasks error:", error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const getActivities = async (req, res) => {
+  try {
+    const { limit = 50, agentId, status } = req.query;
+    const query = { userId: req.userId };
+    if (agentId) query.agentId = agentId;
+    if (status) query.status = status;
+
+    const activities = await Activity.find(query)
+      .populate('agentId', 'name role')
+      .populate('taskId', 'title type status')
+      .sort({ timestamp: -1 })
+      .limit(Math.min(parseInt(limit, 10) || 50, 200));
+
+    return res.status(200).json({ success: true, data: activities });
+  } catch (error) {
+    console.error('Get activities error:', error);
     return res.status(500).json({ success: false, error: error.message });
   }
 };
