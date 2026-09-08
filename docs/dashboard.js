@@ -73,6 +73,8 @@ const populateFilters = () => {
 	});
 	const taskAgentSelect = document.getElementById('new-task-agent');
 	if (taskAgentSelect) taskAgentSelect.innerHTML = `<option value="">Select an agent</option>${dashboardState.agents.filter((agent) => agent.status === 'active').map((agent) => `<option value="${escapeHtml(agent._id)}">${escapeHtml(agent.name)}</option>`).join('')}`;
+	const editAgentSelect = document.getElementById('edit-task-agent');
+	if (editAgentSelect) editAgentSelect.innerHTML = `<option value="">Select an agent</option>${dashboardState.agents.map((agent) => `<option value="${escapeHtml(agent._id)}">${escapeHtml(agent.name)}</option>`).join('')}`;
 	const statusSelect = document.getElementById('log-status-filter');
 	if (statusSelect) statusSelect.innerHTML = '<option value="">All Status</option>' +
 		['received', 'working', 'resolved', 'escalated', 'failed'].map((status) => `<option value="${status}">${status[0].toUpperCase()}${status.slice(1)}</option>`).join('');
@@ -110,7 +112,7 @@ const renderDashboardData = () => {
 	const rows = tasks.map((task) => `
 		<tr><td>${escapeHtml(String(task._id || '').slice(-8))}</td><td>${escapeHtml(getAgentName(task))}</td>
 		<td>${escapeHtml(task.type || 'general')}</td><td>${escapeHtml(task.status || 'received')}</td>
-		<td>${escapeHtml(formatDate(task.createdAt))}</td><td>View</td></tr>
+		<td>${escapeHtml(formatDate(task.createdAt))}</td><td><button class="btn-ghost task-view" type="button" data-task-id="${escapeHtml(task._id)}">View</button></td></tr>
 	`).join('');
 	document.getElementById('tasks-table-body')?.replaceChildren();
 	const tableBody = document.getElementById('tasks-table-body');
@@ -121,6 +123,8 @@ const renderDashboardData = () => {
 		<div class="task-item"><strong>${escapeHtml(task.title || 'Untitled task')}</strong>
 		<span>${escapeHtml(task.status || 'received')} · ${escapeHtml(formatDate(task.createdAt))}</span></div>
 	`).join('') || '<p>No tasks found.</p>';
+	const taskSelect = document.getElementById('edit-task-select');
+	if (taskSelect) taskSelect.innerHTML = `<option value="">Select a task</option>${dashboardState.tasks.map((task) => `<option value="${escapeHtml(task._id)}">${escapeHtml(task.title || 'Untitled task')} (${escapeHtml(task.status || 'received')})</option>`).join('')}`;
 };
 
 const loadDashboardData = async () => {
@@ -160,10 +164,55 @@ const renderLogData = () => {
 	});
 };
 
+const showTaskResult = (task) => {
+	document.getElementById('task-result-panel')?.classList.remove('hidden');
+	setText('task-result-title', task.title || 'Task result');
+	setText('task-result-status', task.status || 'received');
+	setText('task-result-message', task.status === 'working' ? 'The AI agent is processing this task...' : task.status === 'received' ? 'Task queued for processing...' : 'Processing complete.');
+	const output = document.getElementById('task-result-output');
+	if (output) output.textContent = task.result ? (typeof task.result === 'string' ? task.result : JSON.stringify(task.result, null, 2)) : task.error || 'No response yet.';
+	const status = document.getElementById('task-result-status');
+	status?.classList.toggle('resolved', task.status === 'resolved');
+	status?.classList.toggle('failed', task.status === 'failed');
+};
+
+const watchTask = async (taskId) => {
+	for (let attempt = 0; attempt < 30; attempt += 1) {
+		const response = await request(`/tasks/${taskId}`);
+		const task = response.data || response;
+		showTaskResult(task);
+		if (['resolved', 'escalated', 'failed'].includes(task.status)) {
+			await loadDashboardData();
+			return;
+		}
+		await new Promise((resolve) => window.setTimeout(resolve, 2000));
+	}
+};
+
+const loadTaskIntoEditor = (taskId) => {
+	const task = dashboardState.tasks.find((item) => item._id === taskId);
+	if (!task) return;
+	document.getElementById('edit-task-select').value = taskId;
+	document.getElementById('edit-task-title').value = task.title || '';
+	document.getElementById('edit-task-agent').value = task.agentId?._id || task.agentId || '';
+	document.getElementById('edit-task-type').value = task.type || 'custom';
+	document.getElementById('edit-task-priority').value = task.priority || 'normal';
+	document.getElementById('edit-task-input').value = typeof task.input === 'string' ? task.input : JSON.stringify(task.input || '', null, 2);
+};
+
 document.getElementById('task-status-filter')?.addEventListener('change', renderDashboardData);
 document.getElementById('log-search')?.addEventListener('input', renderLogData);
 document.getElementById('log-agent-filter')?.addEventListener('change', renderLogData);
 document.getElementById('log-status-filter')?.addEventListener('change', renderLogData);
+document.getElementById('edit-task-select')?.addEventListener('change', (event) => loadTaskIntoEditor(event.target.value));
+document.getElementById('tasks-table-body')?.addEventListener('click', (event) => {
+	const button = event.target.closest('.task-view');
+	if (!button) return;
+	document.getElementById('task-editor-panel')?.classList.remove('hidden');
+	const task = dashboardState.tasks.find((item) => item._id === button.dataset.taskId);
+	if (task) showTaskResult(task);
+	loadTaskIntoEditor(button.dataset.taskId);
+});
 document.getElementById('logout-btn')?.addEventListener('click', () => {
 	localStorage.removeItem('serveai_token');
 	localStorage.removeItem('serveai_user');
@@ -227,12 +276,49 @@ document.getElementById('task-create-form')?.addEventListener('submit', async (e
 	}
 	if (message) message.textContent = 'Sending task to the AI agent...';
 	try {
-		await request('/tasks', { method: 'POST', body: JSON.stringify({ agentId, title, type, input, priority }) });
+		const response = await request('/tasks', { method: 'POST', body: JSON.stringify({ agentId, title, type, input, priority }) });
+		const createdTask = response.data || response;
+		showTaskResult(createdTask);
 		event.target.reset();
 		if (message) message.textContent = 'Task queued. The agent is processing it.';
 		await loadDashboardData();
+		watchTask(createdTask._id).catch((error) => {
+			if (message) message.textContent = `Unable to follow task: ${error.message}`;
+		});
 	} catch (error) {
 		if (message) message.textContent = `Task failed: ${error.message}`;
+	}
+});
+
+document.getElementById('edit-task-btn')?.addEventListener('click', () => {
+	document.getElementById('task-editor-panel')?.classList.toggle('hidden');
+});
+document.getElementById('close-task-editor')?.addEventListener('click', () => {
+	document.getElementById('task-editor-panel')?.classList.add('hidden');
+});
+document.getElementById('save-task-edit')?.addEventListener('click', async () => {
+	const taskId = document.getElementById('edit-task-select').value;
+	const message = document.getElementById('task-edit-message');
+	if (!taskId) {
+		if (message) message.textContent = 'Select a task first.';
+		return;
+	}
+	try {
+		await request(`/tasks/${taskId}/status`, {
+			method: 'PATCH',
+			body: JSON.stringify({
+				title: document.getElementById('edit-task-title').value.trim(),
+				agentId: document.getElementById('edit-task-agent').value,
+				type: document.getElementById('edit-task-type').value,
+				priority: document.getElementById('edit-task-priority').value,
+				input: document.getElementById('edit-task-input').value.trim(),
+				message: 'Task details updated from dashboard'
+			})
+		});
+		if (message) message.textContent = 'Task changes saved.';
+		await loadDashboardData();
+	} catch (error) {
+		if (message) message.textContent = `Unable to save changes: ${error.message}`;
 	}
 });
 

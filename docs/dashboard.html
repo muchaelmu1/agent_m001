@@ -608,6 +608,53 @@
         <p class="form-message" id="task-create-message" role="status"></p>
       </form>
 
+      <section class="task-result-panel hidden" id="task-result-panel" aria-live="polite">
+        <div class="task-result-header">
+          <div>
+            <p class="section-tag">AI response</p>
+            <h2 id="task-result-title">Task result</h2>
+          </div>
+          <span class="task-result-status" id="task-result-status">Pending</span>
+        </div>
+        <p class="task-result-message" id="task-result-message">Waiting for the agent...</p>
+        <pre class="task-result-output" id="task-result-output"></pre>
+      </section>
+
+      <section class="task-editor-panel hidden" id="task-editor-panel">
+        <div class="task-result-header">
+          <div>
+            <p class="section-tag">Task workspace</p>
+            <h2>Modify an existing task</h2>
+          </div>
+          <button class="btn-ghost" id="close-task-editor" type="button">Close</button>
+        </div>
+        <div class="task-create-fields">
+          <select id="edit-task-select"><option value="">Select a task</option></select>
+          <input id="edit-task-title" type="text" placeholder="Task title">
+          <select id="edit-task-agent"><option value="">Select an agent</option></select>
+          <select id="edit-task-type">
+            <option value="generation">Generation</option>
+            <option value="analysis">Analysis</option>
+            <option value="classification">Classification</option>
+            <option value="extraction">Extraction</option>
+            <option value="custom">Custom</option>
+          </select>
+          <select id="edit-task-priority">
+            <option value="low">Low priority</option>
+            <option value="normal">Normal priority</option>
+            <option value="high">High priority</option>
+            <option value="urgent">Urgent priority</option>
+          </select>
+        </div>
+        <textarea id="edit-task-input" placeholder="Update the task instructions"></textarea>
+        <div class="task-create-actions">
+          <button class="btn-primary" id="save-task-edit" type="button">Save task changes</button>
+        </div>
+        <p class="form-message" id="task-edit-message" role="status"></p>
+      </section>
+
+      <button class="btn-ghost task-editor-toggle" id="edit-task-btn" type="button">Modify an existing task</button>
+
 
       <div class="table-wrapper">
 

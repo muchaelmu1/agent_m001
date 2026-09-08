@@ -172,7 +172,7 @@ export const getTaskById = async (req, res) => {
 export const updateTaskStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, result, requiresHuman, message } = req.body;
+    const { status, result, requiresHuman, message, title, type, input, priority, agentId } = req.body;
     const userId = req.userId;
 
     const validStatuses = ["received", "working", "resolved", "escalated", "failed"];
@@ -185,9 +185,19 @@ export const updateTaskStatus = async (req, res) => {
 
     if (task.userId.toString() !== userId) return res.status(403).json({ success: false, error: "You don't have permission to update this task" });
 
+    if (agentId) {
+      const replacementAgent = await Agent.findOne({ _id: agentId, createdBy: userId, status: 'active' });
+      if (!replacementAgent) return res.status(400).json({ success: false, error: 'Selected agent is not available' });
+    }
+
     if (status) task.status = status;
     if (result) task.result = result;
     if (requiresHuman !== undefined) task.requiresHuman = requiresHuman;
+    if (title) task.title = title;
+    if (type) task.type = type;
+    if (input !== undefined) task.input = input;
+    if (priority) task.priority = priority;
+    if (agentId) task.agentId = agentId;
     if (status === 'working' && !task.startedAt) task.startedAt = new Date();
     if ((status === 'resolved' || status === 'escalated' || status === 'failed') && !task.completedAt) {
       task.completedAt = new Date();
