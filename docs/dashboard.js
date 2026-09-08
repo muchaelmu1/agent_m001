@@ -71,6 +71,8 @@ const populateFilters = () => {
 		const select = document.getElementById(id);
 		if (select) select.innerHTML = `<option value="">All Agents</option>${agentOptions}`;
 	});
+	const taskAgentSelect = document.getElementById('new-task-agent');
+	if (taskAgentSelect) taskAgentSelect.innerHTML = `<option value="">Select an agent</option>${dashboardState.agents.filter((agent) => agent.status === 'active').map((agent) => `<option value="${escapeHtml(agent._id)}">${escapeHtml(agent.name)}</option>`).join('')}`;
 	const statusSelect = document.getElementById('log-status-filter');
 	if (statusSelect) statusSelect.innerHTML = '<option value="">All Status</option>' +
 		['received', 'working', 'resolved', 'escalated', 'failed'].map((status) => `<option value="${status}">${status[0].toUpperCase()}${status.slice(1)}</option>`).join('');
@@ -192,17 +194,47 @@ document.getElementById('create_agent')?.addEventListener('click', async () => {
 		document.getElementById('add_agent')?.classList.remove('visible');
 		await loadDashboardData();
 	} catch (error) {
-		window.alert(error.message);
+		window.alert(`Unable to create agent: ${error.message}`);
 	}
 });
-document.querySelectorAll('.nav-item, [data-section-link]').forEach((link) => link.addEventListener('click', (event) => {
+document.querySelectorAll('.nav-item, [data-section-link], .dropdown-item[href^="#"]').forEach((link) => link.addEventListener('click', (event) => {
 	event.preventDefault();
 	const section = link.dataset.section || link.dataset.sectionLink || (link.getAttribute('href') || '').replace('#', '');
 	const targetSection = (section === 'profile-settings' ? 'settings' : section).replace(/-section$/, '');
 	document.querySelectorAll('.dashboard-section').forEach((item) => item.classList.toggle('active', item.id === `${targetSection}-section` || item.dataset.sectionId === targetSection));
 	document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.section === targetSection));
 	document.querySelector('.sidebar')?.classList.remove('active');
+	document.getElementById('user-dropdown')?.classList.remove('open');
 }));
+
+document.getElementById('new-task-btn')?.addEventListener('click', () => {
+	document.getElementById('task-create-form')?.classList.toggle('hidden');
+});
+document.getElementById('cancel-task-btn')?.addEventListener('click', () => {
+	document.getElementById('task-create-form')?.classList.add('hidden');
+});
+document.getElementById('task-create-form')?.addEventListener('submit', async (event) => {
+	event.preventDefault();
+	const message = document.getElementById('task-create-message');
+	const title = document.getElementById('new-task-title').value.trim();
+	const agentId = document.getElementById('new-task-agent').value;
+	const type = document.getElementById('new-task-type').value;
+	const input = document.getElementById('new-task-input').value.trim();
+	const priority = document.getElementById('new-task-priority').value;
+	if (!agentId || !type || !input || !title) {
+		if (message) message.textContent = 'Complete all task fields first.';
+		return;
+	}
+	if (message) message.textContent = 'Sending task to the AI agent...';
+	try {
+		await request('/tasks', { method: 'POST', body: JSON.stringify({ agentId, title, type, input, priority }) });
+		event.target.reset();
+		if (message) message.textContent = 'Task queued. The agent is processing it.';
+		await loadDashboardData();
+	} catch (error) {
+		if (message) message.textContent = `Task failed: ${error.message}`;
+	}
+});
 
 loadDashboardData().catch((error) => console.error('Dashboard loading error:', error));
 

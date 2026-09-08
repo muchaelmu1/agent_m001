@@ -79,10 +79,8 @@ export const createTask = async (req, res) => {
       message: `Task "${title}" created and queued`,
     });
 
-    // Process task asynchronously if OpenAI client available
-    if (openai) {
-      processTaskWithAI(task._id, agentId, userId, type, input, title, agent);
-    }
+    // Always process through the AI worker so missing configuration becomes a visible failed task.
+    processTaskWithAI(task._id, agentId, userId, type, input, title, agent);
 
     return res.status(201).json({ success: true, data: task, message: "Task created and queued for processing" });
   } catch (error) {
@@ -200,7 +198,10 @@ export const updateTaskStatus = async (req, res) => {
     await task.save();
 
     if (message) {
-      await Activity.create({ agentId: task.agentId, taskId: id, userId, action: 'status_update', status: status || 'pending', message });
+      const activityStatus = status === 'working' ? 'processing' :
+        status === 'failed' ? 'failed' :
+          ['resolved', 'escalated'].includes(status) ? 'success' : 'pending';
+      await Activity.create({ agentId: task.agentId, taskId: id, userId, action: 'status_update', status: activityStatus, message });
     }
 
     return res.status(200).json({ success: true, data: task });

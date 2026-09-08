@@ -549,6 +549,7 @@
         </h1>
 
         <div class="filter-bar">
+          <button class="btn-primary" id="new-task-btn" type="button">+ New Task</button>
 
           <select
             class="filter-select"
@@ -576,6 +577,36 @@
         </div>
 
       </div>
+
+      <form class="task-create-panel hidden" id="task-create-form">
+        <h2>Create Task</h2>
+        <div class="task-create-fields">
+          <input id="new-task-title" type="text" placeholder="Task title" required>
+          <select id="new-task-agent" required>
+            <option value="">Select an agent</option>
+          </select>
+          <select id="new-task-type" required>
+            <option value="">Task type</option>
+            <option value="generation">Generation</option>
+            <option value="analysis">Analysis</option>
+            <option value="classification">Classification</option>
+            <option value="extraction">Extraction</option>
+            <option value="custom">Custom</option>
+          </select>
+          <select id="new-task-priority">
+            <option value="normal">Normal priority</option>
+            <option value="low">Low priority</option>
+            <option value="high">High priority</option>
+            <option value="urgent">Urgent priority</option>
+          </select>
+        </div>
+        <textarea id="new-task-input" placeholder="Describe the work for the AI agent..." required></textarea>
+        <div class="task-create-actions">
+          <button class="btn-primary" type="submit">Send to agent</button>
+          <button class="btn-ghost" id="cancel-task-btn" type="button">Cancel</button>
+        </div>
+        <p class="form-message" id="task-create-message" role="status"></p>
+      </form>
 
 
       <div class="table-wrapper">
