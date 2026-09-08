@@ -63,14 +63,33 @@ const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character
 const formatDate = (value) => value ? new Date(value).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Unknown';
 const getAgentName = (task) => task.agentId?.name || task.agentId || 'Unassigned';
 
+const setText = (id, value) => document.getElementById(id)?.replaceChildren(document.createTextNode(String(value)));
+
+const populateFilters = () => {
+	const agentOptions = dashboardState.agents.map((agent) => `<option value="${escapeHtml(agent.name)}">${escapeHtml(agent.name)}</option>`).join('');
+	['agent-filter', 'log-agent-filter'].forEach((id) => {
+		const select = document.getElementById(id);
+		if (select) select.innerHTML = `<option value="">All Agents</option>${agentOptions}`;
+	});
+	const statusSelect = document.getElementById('log-status-filter');
+	if (statusSelect) statusSelect.innerHTML = '<option value="">All Status</option>' +
+		['received', 'working', 'resolved', 'escalated', 'failed'].map((status) => `<option value="${status}">${status[0].toUpperCase()}${status.slice(1)}</option>`).join('');
+};
+
 const renderDashboardData = () => {
 	const activeAgents = dashboardState.agents.filter((agent) => agent.status === 'active');
 	const today = new Date().toDateString();
 	const tasksToday = dashboardState.tasks.filter((task) => new Date(task.createdAt).toDateString() === today);
+	const resolvedTasks = dashboardState.tasks.filter((task) => task.status === 'resolved');
+	const completedTasks = dashboardState.tasks.filter((task) => ['resolved', 'escalated', 'failed'].includes(task.status));
+	const processingTimes = completedTasks.map((task) => task.processingTime).filter((time) => Number.isFinite(time) && time >= 0);
+	const averageSeconds = processingTimes.length ? Math.round(processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length / 1000) : 0;
 
-	document.getElementById('active-agent-metric')?.replaceChildren(document.createTextNode(activeAgents.length));
-	document.getElementById('active-count')?.replaceChildren(document.createTextNode(activeAgents.length));
-	document.getElementById('tasks-today-metric')?.replaceChildren(document.createTextNode(tasksToday.length));
+	setText('active-agent-metric', activeAgents.length);
+	setText('active-count', activeAgents.length);
+	setText('tasks-today-metric', tasksToday.length);
+	setText('resolution-rate-metric', completedTasks.length ? `${Math.round((resolvedTasks.length / completedTasks.length) * 100)}%` : '0%');
+	setText('avg-response-metric', `${averageSeconds}s`);
 
 	const agentsGrid = document.getElementById('agents-grid');
 	if (agentsGrid) {
@@ -84,7 +103,8 @@ const renderDashboardData = () => {
 	}
 
 	const statusFilter = document.getElementById('task-status-filter')?.value || '';
-	const tasks = statusFilter ? dashboardState.tasks.filter((task) => task.status === statusFilter) : dashboardState.tasks;
+	const agentFilter = document.getElementById('agent-filter')?.value || '';
+	const tasks = dashboardState.tasks.filter((task) => (!statusFilter || task.status === statusFilter) && (!agentFilter || getAgentName(task) === agentFilter));
 	const rows = tasks.map((task) => `
 		<tr><td>${escapeHtml(String(task._id || '').slice(-8))}</td><td>${escapeHtml(getAgentName(task))}</td>
 		<td>${escapeHtml(task.type || 'general')}</td><td>${escapeHtml(task.status || 'received')}</td>
@@ -108,6 +128,7 @@ const loadDashboardData = async () => {
 	const user = userResponse.user || userResponse.data || {};
 	dashboardState.agents = agentsResponse.data || agentsResponse.agents || [];
 	dashboardState.tasks = tasksResponse.data || tasksResponse.tasks || [];
+	populateFilters();
 	const name = user.username || 'User';
 	document.getElementById('user-name')?.replaceChildren(document.createTextNode(name));
 	document.getElementById('user-avatar')?.replaceChildren(document.createTextNode(name.charAt(0).toUpperCase()));
@@ -124,13 +145,15 @@ const renderLogData = () => {
 		const searchable = `${task.title || ''} ${task.type || ''} ${taskAgent}`.toLowerCase();
 		return (!query || searchable.includes(query)) && (!status || task.status === status) && (!agent || taskAgent === agent);
 	});
-	const consoleBody = document.getElementById('logs-console-body');
-	if (!consoleBody) return;
-	consoleBody.innerHTML = filteredTasks.map((task) => `
+	const markup = filteredTasks.map((task) => `
 		<div class="log-line"><span class="ts">${escapeHtml(new Date(task.createdAt || Date.now()).toLocaleTimeString())}</span>
 		<span class="agent">${escapeHtml(getAgentName(task))}</span><span>${escapeHtml(task.title || 'Task updated')}</span>
 		<span class="status ${escapeHtml(task.status || 'received')}">${escapeHtml((task.status || 'received').toUpperCase())}</span></div>
 	`).join('') || '<p>No matching activity.</p>';
+	['logs-console-body', 'dashboard-log-body'].forEach((id) => {
+		const consoleBody = document.getElementById(id);
+		if (consoleBody) consoleBody.innerHTML = markup;
+	});
 };
 
 document.getElementById('task-status-filter')?.addEventListener('change', renderDashboardData);
@@ -172,9 +195,10 @@ document.getElementById('create_agent')?.addEventListener('click', async () => {
 });
 document.querySelectorAll('.nav-item, [data-section-link]').forEach((link) => link.addEventListener('click', (event) => {
 	event.preventDefault();
-	const section = link.dataset.section || link.dataset.sectionLink;
-	document.querySelectorAll('.dashboard-section').forEach((item) => item.classList.toggle('active', item.id === `${section}-section`));
-	document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.section === section));
+	const section = link.dataset.section || link.dataset.sectionLink || (link.getAttribute('href') || '').replace('#', '');
+	const targetSection = section === 'profile-settings' ? 'settings' : section;
+	document.querySelectorAll('.dashboard-section').forEach((item) => item.classList.toggle('active', item.id === `${targetSection}-section` || item.dataset.sectionId === targetSection));
+	document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.section === targetSection));
 	document.querySelector('.sidebar')?.classList.remove('active');
 }));
 
