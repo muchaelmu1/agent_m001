@@ -35,16 +35,20 @@ router.post('/', auth, async (req, res) => {
 router.get('/', auth, async (req, res) => {
   try {
     const userId = req.userId;
+    const { status } = req.query;
     const { page = 1, limit = 20 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
+    const query = { userId };
+    if (status) query.status = status;
 
-    const tasks = await Task.find({ userId })
+    const tasks = await Task.find(query)
+      .populate('agentId', 'name role')
       .sort({ createdAt: -1 })
       .limit(parseInt(limit))
       .skip(skip)
       .exec();
 
-    const total = await Task.countDocuments({ userId });
+    const total = await Task.countDocuments(query);
 
     return res.json({ tasks, total, page: parseInt(page), limit: parseInt(limit) });
   } catch (error) {

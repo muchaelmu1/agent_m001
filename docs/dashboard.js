@@ -1,4 +1,9 @@
 const API_BASE = window.__API_BASE__ || '/api';
+const token = localStorage.getItem('serveai_token');
+
+if (!token) {
+	window.location.replace('./auth.html');
+}
 
 /* ======================================
 SERVEAI DASHBOARD
@@ -29,8 +34,103 @@ document.getElementById("logout-btn");
 const subscribe_container =
 document.querySelector(".subscription_container");
 
-const modal_overlay =
-document.querySelector(".modal-overlay");
+const request = async (path, options = {}) => {
+	const response = await fetch(`${API_BASE}${path}`, {
+		...options,
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${token}`,
+			...(options.headers || {})
+		}
+	});
+
+	if (response.status === 401) {
+		localStorage.removeItem('serveai_token');
+		localStorage.removeItem('serveai_user');
+		window.location.replace('./auth.html');
+		throw new Error('Your session has expired.');
+	}
+
+	const body = await response.json().catch(() => ({}));
+	if (!response.ok) throw new Error(body.error || body.message || 'Request failed');
+	return body;
+};
+
+const dashboardState = { agents: [], tasks: [] };
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({
+	'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+}[character]));
+const formatDate = (value) => value ? new Date(value).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'Unknown';
+const getAgentName = (task) => task.agentId?.name || task.agentId || 'Unassigned';
+
+const renderDashboardData = () => {
+	const activeAgents = dashboardState.agents.filter((agent) => agent.status === 'active');
+	const today = new Date().toDateString();
+	const tasksToday = dashboardState.tasks.filter((task) => new Date(task.createdAt).toDateString() === today);
+
+	document.getElementById('active-agent-metric')?.replaceChildren(document.createTextNode(activeAgents.length));
+	document.getElementById('active-count')?.replaceChildren(document.createTextNode(activeAgents.length));
+	document.getElementById('tasks-today-metric')?.replaceChildren(document.createTextNode(tasksToday.length));
+
+	const agentsGrid = document.getElementById('agents-grid');
+	if (agentsGrid) {
+		agentsGrid.innerHTML = dashboardState.agents.length ? dashboardState.agents.map((agent) => `
+			<article class="agent-card">
+				<div class="agent-card-head"><h3>${escapeHtml(agent.name)}</h3><span>${escapeHtml(agent.status || 'unknown')}</span></div>
+				<p>${escapeHtml(agent.description || agent.role || 'Operations agent')}</p>
+				<small>${escapeHtml(agent.capabilities?.join(', ') || 'No capabilities configured')}</small>
+			</article>
+		`).join('') : '<p>No agents configured yet.</p>';
+	}
+
+	const statusFilter = document.getElementById('task-status-filter')?.value || '';
+	const tasks = statusFilter ? dashboardState.tasks.filter((task) => task.status === statusFilter) : dashboardState.tasks;
+	const rows = tasks.map((task) => `
+		<tr><td>${escapeHtml(String(task._id || '').slice(-8))}</td><td>${escapeHtml(getAgentName(task))}</td>
+		<td>${escapeHtml(task.type || 'general')}</td><td>${escapeHtml(task.status || 'received')}</td>
+		<td>${escapeHtml(formatDate(task.createdAt))}</td><td>View</td></tr>
+	`).join('');
+	document.getElementById('tasks-table-body')?.replaceChildren();
+	const tableBody = document.getElementById('tasks-table-body');
+	if (tableBody) tableBody.innerHTML = rows || '<tr><td colspan="6">No tasks found.</td></tr>';
+
+	const taskList = document.getElementById('task-list');
+	if (taskList) taskList.innerHTML = tasks.slice(0, 5).map((task) => `
+		<div class="task-item"><strong>${escapeHtml(task.title || 'Untitled task')}</strong>
+		<span>${escapeHtml(task.status || 'received')} · ${escapeHtml(formatDate(task.createdAt))}</span></div>
+	`).join('') || '<p>No tasks found.</p>';
+};
+
+const loadDashboardData = async () => {
+	const [userResponse, agentsResponse, tasksResponse] = await Promise.all([
+		request('/auth/me'), request('/agents?limit=100'), request('/tasks?limit=100')
+	]);
+	const user = userResponse.user || userResponse.data || {};
+	dashboardState.agents = agentsResponse.data || agentsResponse.agents || [];
+	dashboardState.tasks = tasksResponse.data || tasksResponse.tasks || [];
+	const name = user.username || 'User';
+	document.getElementById('user-name')?.replaceChildren(document.createTextNode(name));
+	document.getElementById('user-avatar')?.replaceChildren(document.createTextNode(name.charAt(0).toUpperCase()));
+	renderDashboardData();
+};
+
+document.getElementById('task-status-filter')?.addEventListener('change', renderDashboardData);
+document.getElementById('logout-btn')?.addEventListener('click', () => {
+	localStorage.removeItem('serveai_token');
+	localStorage.removeItem('serveai_user');
+	window.location.replace('./auth.html');
+});
+document.getElementById('user-menu-btn')?.addEventListener('click', () => {
+	document.getElementById('user-dropdown')?.classList.toggle('open');
+});
+document.querySelectorAll('.nav-item, [data-section-link]').forEach((link) => link.addEventListener('click', (event) => {
+	event.preventDefault();
+	const section = link.dataset.section || link.dataset.sectionLink;
+	document.querySelectorAll('.dashboard-section').forEach((item) => item.classList.toggle('active', item.id === `${section}-section`));
+	document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.section === section));
+}));
+
+loadDashboardData().catch((error) => console.error('Dashboard loading error:', error));
 
 const show_subscription =
 document.getElementById("show");

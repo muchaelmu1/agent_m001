@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import serveaiRouter from './Routes/serveai.js';
 import taskRouter from './Routes/Taskroute.js';
 import authRouter from './Routes/Auth.js';
+import agentRouter from './Routes/agent.route.js';
 import connectDB from './config/db.js';
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, '..', 'docs')));
 app.use('/api/auth', authRouter);
 app.use('/api/serveai', serveaiRouter);
 app.use('/api/tasks', taskRouter);
+app.use('/api/agents', agentRouter);
 
 // Sample API root
 app.get('/api', (req, res) => {
