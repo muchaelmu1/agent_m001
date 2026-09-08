@@ -1,4 +1,8 @@
-const API_BASE = window.__API_BASE__ || 'https://serveai-2.onrender.com/api';
+const API_BASE =
+    window.__API_BASE__ ||
+    (window.location.origin && window.location.origin !== 'null'
+        ? `${window.location.origin}/api`
+        : 'http://localhost:8080/api');
 
 const form_signup = document.getElementById('signup-form');
 
