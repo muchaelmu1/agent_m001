@@ -56,7 +56,7 @@ const request = async (path, options = {}) => {
 	return body;
 };
 
-const dashboardState = { agents: [], tasks: [], activities: [] };
+const dashboardState = { agents: [], tasks: [], activities: [], team: { owner: null, members: [] } };
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>'"]/g, (character) => ({
 	'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
 }[character]));
@@ -127,20 +127,36 @@ const renderDashboardData = () => {
 	if (taskSelect) taskSelect.innerHTML = `<option value="">Select a task</option>${dashboardState.tasks.map((task) => `<option value="${escapeHtml(task._id)}">${escapeHtml(task.title || 'Untitled task')} (${escapeHtml(task.status || 'received')})</option>`).join('')}`;
 };
 
+const renderTeam = () => {
+	const owner = dashboardState.team.owner ? [{ ...dashboardState.team.owner, owner: true }] : [];
+	const members = [...owner, ...dashboardState.team.members];
+	setText('team-member-count', members.length);
+	setText('team-pending-count', dashboardState.team.members.filter((member) => member.status === 'pending').length);
+	const table = document.getElementById('team-table-body');
+	if (!table) return;
+	table.innerHTML = members.length ? members.map((member) => `
+		<tr><td>${escapeHtml(member.name)}</td><td>${escapeHtml(member.email)}</td><td>${escapeHtml(member.owner ? 'Owner' : member.role)}</td>
+		<td><span class="metric-status ${member.status === 'active' ? 'online' : ''}">● ${escapeHtml(member.status)}</span></td>
+		<td>${member.owner ? '—' : `<button class="btn-ghost remove-team-member" type="button" data-member-id="${escapeHtml(member._id)}">Remove</button>`}</td></tr>
+	`).join('') : '<tr><td colspan="5">No team members yet.</td></tr>';
+};
+
 const loadDashboardData = async () => {
-	const [userResponse, agentsResponse, tasksResponse, activitiesResponse] = await Promise.all([
-		request('/auth/me'), request('/agents?limit=100'), request('/tasks?limit=100'), request('/tasks/activity?limit=100')
+	const [userResponse, agentsResponse, tasksResponse, activitiesResponse, teamResponse] = await Promise.all([
+		request('/auth/me'), request('/agents?limit=100'), request('/tasks?limit=100'), request('/tasks/activity?limit=100'), request('/auth/team')
 	]);
 	const user = userResponse.user || userResponse.data || {};
 	dashboardState.agents = agentsResponse.data || agentsResponse.agents || [];
 	dashboardState.tasks = tasksResponse.data || tasksResponse.tasks || [];
 	dashboardState.activities = activitiesResponse.data || activitiesResponse.activities || [];
+	dashboardState.team = teamResponse.data || { owner: null, members: [] };
 	populateFilters();
 	const name = user.username || 'User';
 	document.getElementById('user-name')?.replaceChildren(document.createTextNode(name));
 	document.getElementById('user-avatar')?.replaceChildren(document.createTextNode(name.charAt(0).toUpperCase()));
 	renderDashboardData();
 	renderLogData();
+	renderTeam();
 };
 
 const renderLogData = () => {
@@ -204,6 +220,34 @@ document.getElementById('task-status-filter')?.addEventListener('change', render
 document.getElementById('log-search')?.addEventListener('input', renderLogData);
 document.getElementById('log-agent-filter')?.addEventListener('change', renderLogData);
 document.getElementById('log-status-filter')?.addEventListener('change', renderLogData);
+document.getElementById('invite-member')?.addEventListener('click', () => document.getElementById('team-invite-form')?.classList.toggle('hidden'));
+document.getElementById('cancel-team-invite')?.addEventListener('click', () => document.getElementById('team-invite-form')?.classList.add('hidden'));
+document.getElementById('team-table-body')?.addEventListener('click', async (event) => {
+	const button = event.target.closest('.remove-team-member');
+	if (!button || !window.confirm('Remove this team member?')) return;
+	try {
+		await request(`/auth/team/${button.dataset.memberId}`, { method: 'DELETE' });
+		await loadDashboardData();
+	} catch (error) {
+		window.alert(`Unable to remove team member: ${error.message}`);
+	}
+});
+document.getElementById('team-invite-form')?.addEventListener('submit', async (event) => {
+	event.preventDefault();
+	const message = document.getElementById('team-invite-message');
+	try {
+		await request('/auth/team', { method: 'POST', body: JSON.stringify({
+			name: document.getElementById('team-member-name').value.trim(),
+			email: document.getElementById('team-member-email').value.trim(),
+			role: document.getElementById('team-member-role').value
+		}) });
+		event.target.reset();
+		if (message) message.textContent = 'Team member added.';
+		await loadDashboardData();
+	} catch (error) {
+		if (message) message.textContent = `Unable to add member: ${error.message}`;
+	}
+});
 document.getElementById('edit-task-select')?.addEventListener('change', (event) => loadTaskIntoEditor(event.target.value));
 document.getElementById('tasks-table-body')?.addEventListener('click', (event) => {
 	const button = event.target.closest('.task-view');

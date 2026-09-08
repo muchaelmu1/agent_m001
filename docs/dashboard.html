@@ -1080,12 +1080,12 @@
             Team Members
           </span>
 
-          <div class="metric-value">
-            4
+          <div class="metric-value" id="team-member-count">
+            0
           </div>
 
           <div class="metric-detail">
-            Active members
+            People in this workspace
           </div>
 
         </div>
@@ -1097,17 +1097,35 @@
             Available Seats
           </span>
 
-          <div class="metric-value">
-            6
+          <div class="metric-value" id="team-pending-count">
+            0
           </div>
 
           <div class="metric-detail">
-            Remaining team seats
+            Pending invitations
           </div>
 
         </div>
 
       </div>
+
+      <form class="team-invite-panel hidden" id="team-invite-form">
+        <h2>Invite a team member</h2>
+        <div class="team-invite-fields">
+          <input id="team-member-name" type="text" placeholder="Full name" required>
+          <input id="team-member-email" type="email" placeholder="name@company.com" required>
+          <select id="team-member-role">
+            <option value="viewer">Viewer</option>
+            <option value="agent">Agent</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="task-create-actions">
+          <button class="btn-primary" type="submit">Add member</button>
+          <button class="btn-ghost" id="cancel-team-invite" type="button">Cancel</button>
+        </div>
+        <p class="form-message" id="team-invite-message" role="status"></p>
+      </form>
 
 
       <!-- TEAM TABLE -->
@@ -1145,121 +1163,8 @@
           </thead>
 
 
-          <tbody>
-
-            <tr>
-
-              <td>
-                Michael
-              </td>
-
-              <td>
-                owner@mikeservices.com
-              </td>
-
-              <td>
-                Owner
-              </td>
-
-              <td>
-                <span class="metric-status online">
-                  ● Active
-                </span>
-              </td>
-
-              <td>
-                —
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>
-                John
-              </td>
-
-              <td>
-                john@example.com
-              </td>
-
-              <td>
-                Admin
-              </td>
-
-              <td>
-                <span class="metric-status online">
-                  ● Active
-                </span>
-              </td>
-
-              <td>
-                <button class="btn-ghost" type="button">
-                  Manage
-                </button>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>
-                Mary
-              </td>
-
-              <td>
-                mary@example.com
-              </td>
-
-              <td>
-                Agent
-              </td>
-
-              <td>
-                <span class="metric-status online">
-                  ● Active
-                </span>
-              </td>
-
-              <td>
-                <button class="btn-ghost" type="button">
-                  Manage
-                </button>
-              </td>
-
-            </tr>
-
-
-            <tr>
-
-              <td>
-                David
-              </td>
-
-              <td>
-                david@example.com
-              </td>
-
-              <td>
-                Viewer
-              </td>
-
-              <td>
-                <span class="metric-status">
-                  ● Offline
-                </span>
-              </td>
-
-              <td>
-                <button class="btn-ghost" type="button">
-                  Manage
-                </button>
-              </td>
-
-            </tr>
-
+          <tbody id="team-table-body">
+            <tr><td colspan="5">Loading team...</td></tr>
           </tbody>
 
         </table>

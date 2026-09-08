@@ -45,6 +45,22 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    teamMembers: {
+      type: [
+        {
+          name: { type: String, required: true, trim: true },
+          email: { type: String, required: true, lowercase: true, trim: true },
+          role: {
+            type: String,
+            enum: ["admin", "agent", "viewer"],
+            default: "viewer",
+          },
+          status: { type: String, enum: ["pending", "active"], default: "pending" },
+          invitedAt: { type: Date, default: Date.now },
+        },
+      ],
+      default: [],
+    },
     createdAt: {
       type: Date,
       default: Date.now,

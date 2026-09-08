@@ -198,3 +198,48 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
+
+export const getTeam = async (req, res) => {
+  const user = await User.findById(req.userId).select("username email role teamMembers");
+  if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+  return res.status(200).json({
+    success: true,
+    data: {
+      owner: { name: user.username, email: user.email, role: user.role, status: "active" },
+      members: user.teamMembers || [],
+    },
+  });
+};
+
+export const inviteTeamMember = async (req, res) => {
+  try {
+    const { name, email, role = "viewer" } = req.body;
+    if (!name || !email) return res.status(400).json({ success: false, error: "Name and email are required" });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, error: "Enter a valid email address" });
+    if (!["admin", "agent", "viewer"].includes(role)) return res.status(400).json({ success: false, error: "Invalid team role" });
+
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ success: false, error: "User not found" });
+    if (user.email.toLowerCase() === email.toLowerCase() || user.teamMembers.some((member) => member.email === email.toLowerCase())) {
+      return res.status(409).json({ success: false, error: "This email is already in your team" });
+    }
+
+    user.teamMembers.push({ name, email, role, status: "pending" });
+    await user.save();
+    return res.status(201).json({ success: true, data: user.teamMembers[user.teamMembers.length - 1], message: "Team invitation added" });
+  } catch (error) {
+    console.error("Invite team member error:", error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+export const removeTeamMember = async (req, res) => {
+  const user = await User.findById(req.userId);
+  if (!user) return res.status(404).json({ success: false, error: "User not found" });
+  const member = user.teamMembers.id(req.params.memberId);
+  if (!member) return res.status(404).json({ success: false, error: "Team member not found" });
+  member.deleteOne();
+  await user.save();
+  return res.status(200).json({ success: true, message: "Team member removed" });
+};

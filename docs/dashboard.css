@@ -145,6 +145,24 @@ margin-bottom:14px;
 .task-result-output{white-space:pre-wrap;max-height:320px;overflow:auto;color:var(--text);font:13px/1.6 var(--mono);background:var(--ink);border:1px solid var(--panel-line);border-radius:5px;padding:14px;min-height:70px}
 .task-editor-toggle{margin-bottom:20px}
 
+.team-invite-panel{
+background:var(--panel);
+border:1px solid var(--panel-line);
+border-radius:8px;
+padding:20px;
+margin:0 0 24px;
+}
+
+.team-invite-panel h2{font-size:18px;margin-bottom:14px}
+.team-invite-fields{display:grid;grid-template-columns:1.2fr 1.5fr .8fr;gap:10px}
+.team-invite-fields input,.team-invite-fields select{width:100%;background:var(--ink);color:var(--text);border:1px solid var(--panel-line);border-radius:5px;padding:10px 12px}
+
+@media(max-width:650px){
+ .team-invite-fields{grid-template-columns:1fr}
+ .table-wrapper{overflow-x:auto}
+ .data-table{min-width:680px}
+}
+
 .pricing-grid{
 display:grid;
 grid-template-columns:repeat(3,minmax(0,1fr));
