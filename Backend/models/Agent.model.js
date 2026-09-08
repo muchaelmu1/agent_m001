@@ -46,8 +46,8 @@ const AgentSchema = new mongoose.Schema(
     },
     model: {
       type: String,
-      default: "gpt-3.5-turbo",
-      enum: ["gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"],
+      default: "llama-3.1-8b-instant",
+      enum: ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "llama-4-scout-17b-16e-instruct"],
     },
     temperature: {
       type: Number,

@@ -2,15 +2,18 @@
 import Task from "../models/Task.js";
 import Agent from "../models/Agent.model.js";
 import Activity from "../models/Activity.model.js";
-import { OpenAI } from "openai";
+import OpenAI from "openai";
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const openaiKey = process.env.OPENAI_API_KEY || process.env.openai_key;
-let openai = null;
-if (openaiKey) {
-  openai = new OpenAI({ apiKey: openaiKey });
+const groqKey = process.env.GROQ_API_KEY || process.env.groq_api_key;
+let groq = null;
+if (groqKey) {
+  groq = new OpenAI({
+    apiKey: groqKey,
+    baseURL: "https://api.groq.com/openai/v1",
+  });
 }
 
 // Get all active agents
@@ -265,12 +268,12 @@ async function processTaskWithAI(taskId, agentId, userId, type, input, title, ag
     const systemPrompt = agent.instructions || `You are a helpful AI agent with role: ${agent.role}. Capabilities: ${agent.capabilities ? agent.capabilities.join(', ') : ''}`;
     const userMessage = typeof input === 'string' ? input : JSON.stringify(input);
 
-    if (!openai) {
-      throw new Error('OpenAI client not configured (OPENAI_API_KEY missing)');
+    if (!groq) {
+      throw new Error('Groq client not configured (GROQ_API_KEY missing)');
     }
 
-    const response = await openai.chat.completions.create({
-      model: agent.model,
+    const response = await groq.chat.completions.create({
+      model: agent.model?.startsWith('gpt-') ? (process.env.GROQ_MODEL || "llama-3.1-8b-instant") : (agent.model || process.env.GROQ_MODEL || "llama-3.1-8b-instant"),
       messages: [ { role: 'system', content: systemPrompt }, { role: 'user', content: userMessage } ],
       temperature: agent.temperature,
       max_tokens: agent.maxTokens,
