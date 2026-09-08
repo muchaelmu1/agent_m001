@@ -281,10 +281,10 @@ document.getElementById('task-create-form')?.addEventListener('submit', async (e
 		showTaskResult(createdTask);
 		event.target.reset();
 		if (message) message.textContent = 'Task queued. The agent is processing it.';
-		await loadDashboardData();
 		watchTask(createdTask._id).catch((error) => {
 			if (message) message.textContent = `Unable to follow task: ${error.message}`;
 		});
+		loadDashboardData().catch((error) => console.error('Dashboard refresh error:', error));
 	} catch (error) {
 		if (message) message.textContent = `Task failed: ${error.message}`;
 	}

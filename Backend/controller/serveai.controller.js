@@ -70,14 +70,14 @@ export const createTask = async (req, res) => {
       tags: tags || [],
     });
 
-    await Activity.create({
+    void Activity.create({
       agentId,
       taskId: task._id,
       userId,
       action: "created",
       status: "pending",
       message: `Task "${title}" created and queued`,
-    });
+    }).catch((activityError) => console.error("Create task activity error:", activityError));
 
     // Always process through the AI worker so missing configuration becomes a visible failed task.
     processTaskWithAI(task._id, agentId, userId, type, input, title, agent);
