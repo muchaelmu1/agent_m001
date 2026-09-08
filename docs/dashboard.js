@@ -220,6 +220,21 @@ document.getElementById('task-status-filter')?.addEventListener('change', render
 document.getElementById('log-search')?.addEventListener('input', renderLogData);
 document.getElementById('log-agent-filter')?.addEventListener('change', renderLogData);
 document.getElementById('log-status-filter')?.addEventListener('change', renderLogData);
+document.getElementById('btn_primary')?.addEventListener('click', () => document.getElementById('add_agent')?.classList.toggle('visible'));
+document.getElementById('create_agent')?.addEventListener('click', async () => {
+	const input = document.getElementById('agent_id');
+	const number = input?.value.trim();
+	const model = document.getElementById('agent_model')?.value || 'openai/gpt-oss-20b';
+	if (!number) return;
+	try {
+		await request('/agents', { method: 'POST', body: JSON.stringify({ name: `Agent ${number}`, role: 'assistant', model }) });
+		if (input) input.value = '';
+		document.getElementById('add_agent')?.classList.remove('visible');
+		await loadDashboardData();
+	} catch (error) {
+		window.alert(`Unable to create agent: ${error.message}`);
+	}
+});
 document.getElementById('invite-member')?.addEventListener('click', () => document.getElementById('team-invite-form')?.classList.toggle('hidden'));
 document.getElementById('cancel-team-invite')?.addEventListener('click', () => document.getElementById('team-invite-form')?.classList.add('hidden'));
 document.getElementById('team-table-body')?.addEventListener('click', async (event) => {

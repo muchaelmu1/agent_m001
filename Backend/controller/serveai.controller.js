@@ -273,7 +273,7 @@ async function processTaskWithAI(taskId, agentId, userId, type, input, title, ag
     }
 
     const response = await groq.chat.completions.create({
-      model: agent.model?.startsWith('gpt-') ? (process.env.GROQ_MODEL || "llama-3.1-8b-instant") : (agent.model || process.env.GROQ_MODEL || "llama-3.1-8b-instant"),
+      model: agent.model || process.env.GROQ_MODEL || "openai/gpt-oss-20b",
       messages: [ { role: 'system', content: systemPrompt }, { role: 'user', content: userMessage } ],
       temperature: agent.temperature,
       max_tokens: agent.maxTokens,

@@ -111,7 +111,7 @@ export const createAgent = async (req, res) => {
       instructions: instructions || "You are a helpful AI assistant",
       description: description || null,
       capabilities: capabilities || [],
-      model: model || process.env.GROQ_MODEL || "llama-3.1-8b-instant",
+      model: model || process.env.GROQ_MODEL || "openai/gpt-oss-20b",
       temperature: temperature || 0.7,
       maxTokens: maxTokens || 500,
       createdBy: req.userId,
