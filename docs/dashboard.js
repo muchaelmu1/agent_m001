@@ -1,4 +1,4 @@
-const API_BASE = window.__API_BASE__ || '/api';
+const API_BASE = window.__API_BASE__ || 'https://serveai-2.onrender.com/api';
 const token = localStorage.getItem('serveai_token');
 
 if (!token) {
@@ -112,22 +112,70 @@ const loadDashboardData = async () => {
 	document.getElementById('user-name')?.replaceChildren(document.createTextNode(name));
 	document.getElementById('user-avatar')?.replaceChildren(document.createTextNode(name.charAt(0).toUpperCase()));
 	renderDashboardData();
+	renderLogData();
+};
+
+const renderLogData = () => {
+	const query = document.getElementById('log-search')?.value.trim().toLowerCase() || '';
+	const status = document.getElementById('log-status-filter')?.value || '';
+	const agent = document.getElementById('log-agent-filter')?.value.toLowerCase() || '';
+	const filteredTasks = dashboardState.tasks.filter((task) => {
+		const taskAgent = getAgentName(task).toLowerCase();
+		const searchable = `${task.title || ''} ${task.type || ''} ${taskAgent}`.toLowerCase();
+		return (!query || searchable.includes(query)) && (!status || task.status === status) && (!agent || taskAgent === agent);
+	});
+	const consoleBody = document.getElementById('logs-console-body');
+	if (!consoleBody) return;
+	consoleBody.innerHTML = filteredTasks.map((task) => `
+		<div class="log-line"><span class="ts">${escapeHtml(new Date(task.createdAt || Date.now()).toLocaleTimeString())}</span>
+		<span class="agent">${escapeHtml(getAgentName(task))}</span><span>${escapeHtml(task.title || 'Task updated')}</span>
+		<span class="status ${escapeHtml(task.status || 'received')}">${escapeHtml((task.status || 'received').toUpperCase())}</span></div>
+	`).join('') || '<p>No matching activity.</p>';
 };
 
 document.getElementById('task-status-filter')?.addEventListener('change', renderDashboardData);
+document.getElementById('log-search')?.addEventListener('input', renderLogData);
+document.getElementById('log-agent-filter')?.addEventListener('change', renderLogData);
+document.getElementById('log-status-filter')?.addEventListener('change', renderLogData);
 document.getElementById('logout-btn')?.addEventListener('click', () => {
 	localStorage.removeItem('serveai_token');
 	localStorage.removeItem('serveai_user');
 	window.location.replace('./auth.html');
 });
 document.getElementById('user-menu-btn')?.addEventListener('click', () => {
-	document.getElementById('user-dropdown')?.classList.toggle('open');
+	const menu = document.getElementById('user-dropdown');
+	const button = document.getElementById('user-menu-btn');
+	const open = menu?.classList.toggle('open') || false;
+	button?.setAttribute('aria-expanded', String(open));
+});
+document.getElementById('menu-btn')?.addEventListener('click', () => {
+	document.querySelector('.sidebar')?.classList.toggle('active');
+});
+document.getElementById('btn_primary')?.addEventListener('click', () => {
+	document.getElementById('add_agent')?.classList.toggle('visible');
+});
+document.getElementById('create_agent')?.addEventListener('click', async () => {
+	const input = document.getElementById('agent_id');
+	const number = input?.value.trim();
+	if (!number) return;
+	try {
+		await request('/agents', {
+			method: 'POST',
+			body: JSON.stringify({ name: `Agent ${number}`, role: 'operations' })
+		});
+		if (input) input.value = '';
+		document.getElementById('add_agent')?.classList.remove('visible');
+		await loadDashboardData();
+	} catch (error) {
+		window.alert(error.message);
+	}
 });
 document.querySelectorAll('.nav-item, [data-section-link]').forEach((link) => link.addEventListener('click', (event) => {
 	event.preventDefault();
 	const section = link.dataset.section || link.dataset.sectionLink;
 	document.querySelectorAll('.dashboard-section').forEach((item) => item.classList.toggle('active', item.id === `${section}-section`));
 	document.querySelectorAll('.nav-item').forEach((item) => item.classList.toggle('active', item.dataset.section === section));
+	document.querySelector('.sidebar')?.classList.remove('active');
 }));
 
 loadDashboardData().catch((error) => console.error('Dashboard loading error:', error));

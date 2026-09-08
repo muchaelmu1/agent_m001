@@ -216,8 +216,12 @@ border:1px solid var(--panel-line);
 border-radius:8px;
 box-shadow:0 12px 30px rgba(0,0,0,.35);
 z-index:3000;
-display:flex;
+display:none;
 flex-direction:column;
+}
+
+.user-dropdown.open{
+display:flex;
 }
 
 .user-dropdown.hidden{
