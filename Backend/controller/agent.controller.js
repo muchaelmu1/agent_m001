@@ -96,8 +96,8 @@ export const createAgent = async (req, res) => {
       });
     }
 
-    // Check if agent name already exists
-    const existingAgent = await Agent.findOne({ name });
+    // Agent names only need to be unique within the current user's workspace.
+    const existingAgent = await Agent.findOne({ name, createdBy: req.userId });
     if (existingAgent) {
       return res.status(409).json({
         success: false,
@@ -124,6 +124,12 @@ export const createAgent = async (req, res) => {
     });
   } catch (error) {
     console.error("Create agent error:", error);
+    if (error?.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        error: "An agent with this name already exists in your workspace",
+      });
+    }
     return res.status(500).json({
       success: false,
       error: error.message,

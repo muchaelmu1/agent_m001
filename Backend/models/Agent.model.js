@@ -7,7 +7,6 @@ const AgentSchema = new mongoose.Schema(
       type: String,
       required: [true, "Agent name is required"],
       trim: true,
-      unique: true,
     },
     role: {
       type: String,
@@ -92,6 +91,8 @@ const AgentSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+AgentSchema.index({ createdBy: 1, name: 1 }, { unique: true });
 
 const Agent = mongoose.model("Agent", AgentSchema);
 

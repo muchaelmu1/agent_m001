@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import Agent from '../models/Agent.model.js';
 
 let memoryMongoServer = null;
+
+async function syncAgentIndexes() {
+  await Agent.syncIndexes();
+}
 
 export default async function connectDB() {
   const uri = process.env.MONGO_URI;
@@ -11,6 +16,7 @@ export default async function connectDB() {
       await mongoose.connect(uri, {
         // options can be added here if needed
       });
+      await syncAgentIndexes();
       console.log('MongoDB connected');
       return;
     }
@@ -25,6 +31,7 @@ export default async function connectDB() {
       }
 
       await mongoose.connect(memoryMongoServer.getUri());
+      await syncAgentIndexes();
       console.log('MongoDB connected via in-memory fallback');
     } catch (fallbackError) {
       console.error('MongoDB fallback connection error:', fallbackError.message);
